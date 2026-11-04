@@ -30,6 +30,31 @@ cd backend && uv sync && uv run pytest
 cd frontend && pnpm install && pnpm test
 ```
 
+## Authentication (BFF)
+
+The backend is a BFF: the browser never sees a token. `/api/auth/login` sends it to the identity provider
+(authorization code + PKCE), `/api/auth/callback` trades the code for tokens that stay in a server-side session,
+and the browser only holds an opaque HttpOnly cookie. Non-browser clients can send `Authorization: Bearer <token>`.
+
+| Route | Role |
+| --- | --- |
+| `GET /api/auth/login?redirect=/path` | start the login (only internal paths are accepted) |
+| `GET /api/auth/callback` | end of the login, creates the session |
+| `GET /api/auth/me` | the current user (`401` when logged out) |
+| `POST /api/auth/logout` | ends the session, returns the provider's `logout_url` |
+
+In a route: `async def route(user: CurrentUser)` (`from app.auth.deps import CurrentUser`).
+
+Nothing in the code is tied to Keycloak. It speaks standard OIDC through [Authlib](https://authlib.org) and is
+configured by `OIDC_*` variables (see `backend/app/config.py`); Keycloak only appears in `docker-compose.yaml`
+and `docker/keycloak/realm-app.json` (user `dev` / `dev`). To use another provider, change `OIDC_ISSUER`, the client
+credentials and, if the provider names them differently, `OIDC_ROLES_CLAIM` / `OIDC_GROUPS_CLAIM`
+(dotted path for nested claims, e.g. `realm_access.roles`).
+
+- `AUTH_MODE=full-access` disables authentication: every request is a fixed dev user (no provider needed, used by tests).
+- Sessions live in memory (`app/auth/session.py`): implement the `SessionStore` protocol on Redis or a database
+  before running several replicas.
+
 ## Releases
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/). release-please opens **one** release

@@ -4,14 +4,16 @@ version = "0.0.0"
 description = "Backend of the app"
 requires-python = ">=3.13"
 dependencies = [
+    "authlib>=1.9.4",
     "fastapi>=0.115",
+    "httpx>=0.28.1",
+    "itsdangerous>=2.2.0",
     "pydantic-settings>=2.6",
     "uvicorn[standard]>=0.32",
 ]
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28",
     "pytest>=8",
     "pytest-cov>=6",
     "ruff>=0.8",
