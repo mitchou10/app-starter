@@ -1,9 +1,11 @@
-import { ChevronsUpDown, Languages, ListChecks, LogOut, MessageSquarePlus, Settings } from 'lucide-react'
+import { Bell, ChevronsUpDown, Languages, ListChecks, LogOut, MessageSquarePlus, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { useCurrentUser } from '@/auth/AuthProvider'
 import { UserAvatar } from '@/components/UserAvatar'
 import { ADMIN_NAV } from '@/layouts/appNav'
+import { useUnreadCount } from '@/features/notifications/api/notifications'
+import { NotificationCount } from '@/features/notifications/components/NotificationCount'
 import { useFeedbackDialog } from '@/features/feedback/FeedbackDialogProvider'
 import { shortcutLabel } from '@/features/feedback/shortcut'
 import {
@@ -30,6 +32,7 @@ export function UserMenu() {
   const { user, avatarVersion, logout } = useCurrentUser()
   const { current, languages, change } = useLanguage()
   const { openDialog } = useFeedbackDialog()
+  const unread = useUnreadCount()
   if (!user) return null
 
   const name = user.name || user.username || user.email
@@ -38,8 +41,10 @@ export function UserMenu() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" aria-label={t('userMenu.open')} />}>
-            <UserAvatar user={user} version={avatarVersion} className="size-8" />
+          <DropdownMenuTrigger
+            render={<SidebarMenuButton size="lg" aria-label={unread > 0 ? t('userMenu.openUnread', { count: unread }) : t('userMenu.open')} />}
+          >
+            <UserAvatar user={user} version={avatarVersion} badge={unread > 0 ? t('userMenu.unread', { count: unread }) : undefined} className="size-8" />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{name}</span>
               <span className="truncate text-xs text-muted-foreground">{user.email}</span>
@@ -57,6 +62,13 @@ export function UserMenu() {
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem render={<Link to="/notifications" />}>
+              <Bell aria-hidden />
+              {t('userMenu.notifications')}
+              <NotificationCount count={unread} className="ml-auto" />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>

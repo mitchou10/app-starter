@@ -67,7 +67,12 @@
     "giveFeedback": "Give feedback",
     "myFeedback": "Manage my feedback",
     "admin": "Administration",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "notifications": "Notifications",
+    "openUnread_one": "Open the user menu, 1 unread notification",
+    "openUnread_other": "Open the user menu, {{count}} unread notifications",
+    "unread_one": "1 unread notification",
+    "unread_other": "{{count}} unread notifications"
   },
   "appHome": {
     "welcome": "Welcome, {{name}}",
@@ -209,5 +214,26 @@
     "network": "The server cannot be reached. Try again.",
     "failed": "Something went wrong. Try again.",
     "conflict": "This cannot be done: the app itself relies on it."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "What the applications tell you.",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread ({{count}})"
+    },
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "markUnread": "Mark as unread",
+    "open": "Open",
+    "openOn": "Open on {{host}}",
+    "unreadLabel": "Unread:",
+    "empty": {
+      "all": "You have no notifications.",
+      "unread": "No unread notifications."
+    },
+    "count": "{{shown}} of {{total}}",
+    "more": "Show {{count}} more",
+    "loading": "Loading..."
   }
 }
