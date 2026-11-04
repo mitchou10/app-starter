@@ -1,6 +1,6 @@
-"""Checks on an uploaded profile photo. Pure functions: no I/O."""
+"""Checks on an uploaded image (profile photo, screenshot). Pure functions: no I/O."""
 
-from app.services.errors import AvatarTooLarge, UnsupportedImage
+from app.services.errors import ImageTooLarge, UnsupportedImage
 
 # SVG is left out on purpose: it can carry scripts, and is served back from the app's own origin.
 _SIGNATURES = (
@@ -19,10 +19,10 @@ def detect_image_type(data: bytes) -> str | None:
     return None
 
 
-def validate_avatar(data: bytes, max_bytes: int) -> str:
-    """The content type of a valid photo; raises when it is too large or not a PNG, JPEG or WebP image."""
+def validate_image(data: bytes, max_bytes: int) -> str:
+    """The content type of a valid image; raises when it is too large or not a PNG, JPEG or WebP image."""
     if len(data) > max_bytes:
-        raise AvatarTooLarge
+        raise ImageTooLarge
     content_type = detect_image_type(data)
     if content_type is None:
         raise UnsupportedImage

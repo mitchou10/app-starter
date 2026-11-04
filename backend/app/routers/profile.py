@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Response, UploadFile, status
 from app.auth.deps import CurrentUser
 from app.routers.deps import ProfileServiceDep
 from app.schemas import ProfileOut
-from app.services.errors import AvatarNotFound, AvatarTooLarge, UnsupportedImage
+from app.services.errors import AvatarNotFound, ImageTooLarge, UnsupportedImage
 
 router = APIRouter(prefix="/api/me", tags=["profile"])
 
@@ -38,7 +38,7 @@ async def put_avatar(file: UploadFile, user: CurrentUser, service: ProfileServic
     data = await file.read(service.max_avatar_bytes + 1)
     try:
         profile = await service.set_avatar(user.user_id, data)
-    except AvatarTooLarge:
+    except ImageTooLarge:
         raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, "The photo is too large") from None
     except UnsupportedImage:
         raise HTTPException(
