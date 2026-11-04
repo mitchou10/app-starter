@@ -72,3 +72,13 @@ async def get_current_user(request: Request) -> RequestContext:
 
 
 CurrentUser = Annotated[RequestContext, Depends(get_current_user)]
+
+
+async def require_admin(user: CurrentUser) -> RequestContext:
+    """Dependency: the logged-in user, who must be an admin (the role is set by OIDC_ADMIN_ROLE)."""
+    if not user.is_admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Administrators only")
+    return user
+
+
+AdminUser = Annotated[RequestContext, Depends(require_admin)]
