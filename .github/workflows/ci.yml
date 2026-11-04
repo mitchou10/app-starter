@@ -37,6 +37,7 @@ jobs:
       FILTERS: |
         backend:
           - 'backend/**'
+          - 'docker-compose.test.yaml'
         frontend:
           - 'frontend/**'
         ci:
@@ -86,6 +87,11 @@ jobs:
       PYTHON_VERSION: "3.13" # the project requires >=3.13
       COVERAGE_SOURCE: app
       MIN_COVERAGE: "80"
+      # The tests run against a real PostgreSQL (the schema comes from the migrations); S3 is simulated.
+      COMPOSE_FILE: ../docker-compose.test.yaml # relative to WORKING_DIRECTORY
+      COMPOSE_SERVICES: postgres-test
+      ENV: |
+        DATABASE_URL=postgresql+asyncpg://app:app@localhost:55433/app
 
   backend-image:
     needs: paths

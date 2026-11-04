@@ -15,9 +15,34 @@ services:
       FRONTEND_URL: http://localhost:5173
       SESSION_COOKIE_SECURE: "false" # plain HTTP in local development
       # AUTH_MODE: full-access        # run without Keycloak: every request is a fixed dev user
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/app
+      # Object storage, with the usual AWS_* variables (RustFS here, any S3-compatible service works).
+      AWS_ENDPOINT_URL: http://rustfs:9000
+      AWS_ACCESS_KEY_ID: rustfsadmin # dev only
+      AWS_SECRET_ACCESS_KEY: rustfsadmin # dev only
+      AWS_REGION: us-east-1
+      AWS_BUCKET: app
     depends_on:
       keycloak:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      rustfs:
+        condition: service_healthy
+
+  # One-shot: brings the database to the latest migration, then exits. The backend waits for it, so a fresh
+  # `docker compose down -v && up` never starts the app on an empty database.
+  migrate:
+    build:
+      context: backend
+      target: dev
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
 
   frontend:
     build:
@@ -28,6 +53,51 @@ services:
     ports: ["5173:5173"]
     volumes: ["./frontend/src:/app/src"]
     depends_on: [backend]
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app # dev only
+      POSTGRES_DB: app
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # RustFS's image runs as non-root (uid 10001); a named Docker volume belongs to root, so this one-shot fixes
+  # the permissions before RustFS starts.
+  rustfs-volume-permissions:
+    image: alpine
+    volumes: ["rustfs-data:/data"]
+    command: chown -R 10001:10001 /data
+    restart: "no"
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    depends_on:
+      rustfs-volume-permissions:
+        condition: service_completed_successfully
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: 0.0.0.0:9000
+      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_ACCESS_KEY: rustfsadmin # dev only
+      RUSTFS_SECRET_KEY: rustfsadmin # dev only
+    volumes: ["rustfs-data:/data"]
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # console
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
 
   # Any OIDC provider fits: only the OIDC_* variables above know about it.
   keycloak:
@@ -59,3 +129,7 @@ services:
       timeout: 5s
       retries: 15
       start_period: 30s
+
+volumes:
+  postgres-data:
+  rustfs-data:
