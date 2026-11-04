@@ -1,10 +1,65 @@
 {
-  "app": { "title": "App" },
+  "app": {
+    "title": "App"
+  },
   "auth": {
-    "loading": "Chargement...",
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
-    "signedInAs": "Connecté en tant que {{name}}"
+    "required": "Vous devez vous connecter pour voir cette page."
   },
-  "language": { "label": "Langue", "en": "English", "fr": "Français" }
+  "language": {
+    "label": "Langue",
+    "en": "English",
+    "fr": "Français"
+  },
+  "landing": {
+    "hero": {
+      "title": "Construisez votre prochaine application sur des bases solides",
+      "description": "Un backend, un frontend, l'authentification, la CI et les releases : tout est branché, il ne reste que votre produit à écrire.",
+      "cta": "Découvrir les fonctionnalités"
+    },
+    "features": {
+      "title": "Tout pour bien démarrer",
+      "description": "Chaque brique est petite, remplaçable et documentée.",
+      "backend": {
+        "title": "Backend FastAPI",
+        "description": "API Python typée avec uv, tests et couverture prêts à l'emploi."
+      },
+      "frontend": {
+        "title": "Frontend React",
+        "description": "Vite, Tailwind CSS et des composants shadcn/ui que vous possédez et modifiez."
+      },
+      "auth": {
+        "title": "Connexion sécurisée",
+        "description": "Un backend-for-frontend compatible avec tout fournisseur OpenID Connect : les tokens n'atteignent jamais le navigateur."
+      },
+      "releases": {
+        "title": "Releases par service",
+        "description": "Un changelog et une version pour chaque service, plus une release globale."
+      },
+      "i18n": {
+        "title": "Multilingue",
+        "description": "Anglais et français inclus, un fichier JSON par langue."
+      },
+      "containers": {
+        "title": "Conteneurs",
+        "description": "Images Docker construites, scannées et publiées à chaque release."
+      }
+    }
+  },
+  "footer": "© {{year}} App. Tous droits réservés.",
+  "nav": {
+    "features": "Fonctionnalités"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous cherchez n'existe pas.",
+    "back": "Retour à l'accueil"
+  },
+  "account": {
+    "title": "Mon compte",
+    "name": "Nom",
+    "email": "E-mail",
+    "roles": "Rôles"
+  }
 }

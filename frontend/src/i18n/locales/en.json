@@ -1,10 +1,65 @@
 {
-  "app": { "title": "App" },
+  "app": {
+    "title": "App"
+  },
   "auth": {
-    "loading": "Loading...",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "signedInAs": "Signed in as {{name}}"
+    "required": "You need to sign in to see this page."
   },
-  "language": { "label": "Language", "en": "English", "fr": "Français" }
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "fr": "Français"
+  },
+  "landing": {
+    "hero": {
+      "title": "Build your next app on solid ground",
+      "description": "A backend, a frontend, authentication, CI and releases: everything is wired, you only write your product.",
+      "cta": "Discover the features"
+    },
+    "features": {
+      "title": "Everything you need to start",
+      "description": "Each piece is small, replaceable and documented.",
+      "backend": {
+        "title": "FastAPI backend",
+        "description": "Typed Python API with uv, tests and coverage out of the box."
+      },
+      "frontend": {
+        "title": "React frontend",
+        "description": "Vite, Tailwind CSS and shadcn/ui components you own and can edit."
+      },
+      "auth": {
+        "title": "Secure login",
+        "description": "A backend-for-frontend with any OpenID Connect provider: tokens never reach the browser."
+      },
+      "releases": {
+        "title": "Releases per service",
+        "description": "One changelog and one version for each service, plus a global release."
+      },
+      "i18n": {
+        "title": "Multilingual",
+        "description": "English and French included, one JSON file per language."
+      },
+      "containers": {
+        "title": "Containers",
+        "description": "Docker images built, scanned and published on every release."
+      }
+    }
+  },
+  "footer": "© {{year}} App. All rights reserved.",
+  "nav": {
+    "features": "Features"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "back": "Back to home"
+  },
+  "account": {
+    "title": "My account",
+    "name": "Name",
+    "email": "Email",
+    "roles": "Roles"
+  }
 }

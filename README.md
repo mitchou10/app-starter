@@ -41,6 +41,29 @@ React 19 + TypeScript on Vite, styled with [Tailwind CSS](https://tailwindcss.co
   `src/i18n/index.ts`.
 - `/api` is proxied to the backend (`BACKEND_URL`), so the session cookie stays on the page's own origin.
 
+### Structure, routing and landing page
+
+```
+src/routes.tsx         every route of the app, in one place
+src/layouts/           RootLayout (header + footer shared by all pages), nav.ts (header links), ScrollToHash
+src/pages/             one file per page (NotFoundPage, AccountPage)
+src/auth/              AuthProvider (who is logged in, asked once), RequireAuth (protects routes)
+src/components/        generic and reusable: Container, Section, SectionHeading, LanguageSwitcher, AuthButton
+src/components/ui/     shadcn/ui (generated, edit freely)
+src/features/landing/  the home page: one small component per file, everything comes from props
+  content.ts           the list of features (icon + key)
+  LandingPage.tsx      only assembles the sections
+```
+
+[React Router](https://reactrouter.com) 8. **Add a page**: create it in `src/pages` (or `src/features/<name>`), add a line
+in `routes.tsx`, and a link in `layouts/nav.ts` if it belongs in the header. Put it under `<RequireAuth>` (as `account`
+is) when it needs a logged-in user: a visitor gets a sign-in button that brings them back to the page. Unknown
+addresses show the 404 page; nginx falls back to `index.html` so a refresh on any route works.
+
+Components stay small, take their texts as props and know nothing about i18n; only the pages, the layout and
+`AuthButton` call `t()`. To adapt the landing page in a new project: edit the texts in `src/i18n/locales/*.json`, the
+list in `content.ts`, and add or remove sections in `LandingPage.tsx`.
+
 ## Authentication (BFF)
 
 The backend is a BFF: the browser never sees a token. `/api/auth/login` sends it to the identity provider
