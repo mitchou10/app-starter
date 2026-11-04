@@ -6,11 +6,13 @@ from app.config import settings
 from app.routers import (
     admin_feedback,
     admin_feedback_references,
+    emit,
     feedback,
     feedback_attachments,
     feedback_messages,
     feedback_references,
     health,
+    notifications,
     profile,
 )
 from app.routers.errors import register_error_handlers
@@ -39,3 +41,5 @@ app.include_router(feedback.router)
 app.include_router(feedback_messages.router)
 app.include_router(feedback_attachments.router)
 app.include_router(admin_feedback.router)
+app.include_router(notifications.router)
+app.include_router(emit.router)

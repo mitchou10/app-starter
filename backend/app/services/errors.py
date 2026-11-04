@@ -81,3 +81,14 @@ class InvalidPage(ServiceError):
 
 class EmptyMessage(ServiceError):
     message = "The message is empty"
+
+
+# ---- notifications
+class NotificationNotFound(ServiceError):
+    """Also used for somebody else's notification: it must look like it does not exist."""
+
+    message = "This notification does not exist"
+
+
+class InvalidUrl(ServiceError):
+    message = "The link must be a path of the app (starting with a single /) or an http(s) address"
