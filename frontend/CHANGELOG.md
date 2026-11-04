@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.3.0](https://github.com/mitchou10/app-starter/compare/frontend-v0.2.0...frontend-v0.3.0) (2026-11-04)
+
+
+### Features
+
+* add a plain user to the Keycloak realm ([dc31a19](https://github.com/mitchou10/app-starter/commit/dc31a19605a02a1cfdd5052f6205e8e2f97f7766))
+* **frontend:** add a favicon ([e7a2baa](https://github.com/mitchou10/app-starter/commit/e7a2baa95180bd0696bd337f6088925988e42ed2))
+* **frontend:** add the feedback screens, on an in-memory mock ([de0a69d](https://github.com/mitchou10/app-starter/commit/de0a69d101b3df69f41201e0bf13c26d3b6b529d))
+* **frontend:** add the layer that talks to the feedback API ([9df20ca](https://github.com/mitchou10/app-starter/commit/9df20ca54fffe08cc6692f225288a666983bef5b))
+* **frontend:** open Give feedback with Ctrl+Shift+F and attach the page the user is on ([9a5aa25](https://github.com/mitchou10/app-starter/commit/9a5aa256da576e3b374d967ec0038de03014d93e))
+* **frontend:** read and write the feedback through the API ([8415cc5](https://github.com/mitchou10/app-starter/commit/8415cc5da1c95249a14a4ca15de90f155301388c))
+* **frontend:** scroll the follow-up on its own and paginate the feedback list ([6bef123](https://github.com/mitchou10/app-starter/commit/6bef1230cb20cd80febcb5d2759d48df1391ec68))
+
+
+### Code Refactoring
+
+* **frontend:** one feedback page per side, with the list and the detail together ([5ef0d19](https://github.com/mitchou10/app-starter/commit/5ef0d19b7c7e91aa86f79aab8e423746fa825376))
+
+
+### Dependencies
+
+* **frontend:** add TanStack Query ([a6d188f](https://github.com/mitchou10/app-starter/commit/a6d188f80f4f3c21e5cdedde1f6df5de270cdfc8))
+* **frontend:** add the shadcn dialog, textarea, badge, table, label and tabs components ([287fb7a](https://github.com/mitchou10/app-starter/commit/287fb7a2712f9e9bb27ac0c08103e5c23e17a830))
+
 ## [0.2.0](https://github.com/mitchou10/app-starter/compare/frontend-v0.1.0...frontend-v0.2.0) (2026-11-04)
 
 
