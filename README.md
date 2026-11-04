@@ -172,6 +172,13 @@ The address says which one is open (`/feedback/<id>`), so it can be shared:
 - **Admin** (`/admin/feedback`): every feedback, with a second tab for the types and the statuses. It is in an
   *Administration* group of the profile menu, which only admins see. The sidebar stays light on purpose.
 
+**Give feedback** is a modal, opened from the profile menu, the *New feedback* button or the keyboard shortcut
+**Ctrl+Shift+F** (⌘⇧F on a Mac) from anywhere in the app. Plain Ctrl+F is the browser's "find in page", so it is not
+taken; the key is one constant, `SHORTCUT_KEY` in `shortcut.ts`. The modal is mounted once in the app layout
+(`FeedbackLauncher`) and its state is in `FeedbackProvider`. The page the user is on when it opens (path and query)
+is captured at that moment and offered as a checkbox, *Attach the page I am on*; the feedback then shows it as a link,
+which tells the team where the problem was.
+
 Nothing scrolls the page: the list, the follow-up and the description each scroll in their own box.
 
 - **Follow-up**: opens on the latest message and goes back there when one is added. Only the latest 10 messages are
