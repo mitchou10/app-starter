@@ -160,17 +160,21 @@ Components stay small, take their texts as props and know nothing about i18n; on
 
 ### Feedback module (mockups)
 
-Users send feedback (title, description, type, screenshots) from their profile menu and follow it in **My feedback**;
-admins answer and move it forward. The screens are built in `src/features/feedback/` on an **in-memory mock**
-(`FeedbackProvider`, with sample data in `mock/data.ts`): nothing is saved, a reload starts again. Each function of the
-mock becomes a call to the backend later; the screens only use `useFeedback()`.
+Users send feedback (title, description, type, screenshots) from their profile menu and follow it; admins answer and
+move it forward. The screens are built in `src/features/feedback/` on an **in-memory mock** (`FeedbackProvider`, with
+sample data in `mock/data.ts`): nothing is saved, a reload starts again. Each function of the mock becomes a call to
+the backend later; the screens only use `useFeedback()`.
 
-- Profile menu: *Give feedback* (a dialog), *My feedback*, and for admins an *Administration* group (all feedback,
-  types and statuses). The sidebar stays light on purpose.
-- Types and statuses are data, not code: an admin adds, edits or archives them. An author can close or reopen their own
-  feedback; only admins change the status or the type.
-- To see it: `docker compose up` (the `dev` user of the Keycloak realm is an admin), or run the backend with
-  `AUTH_MODE=full-access` and `pnpm dev` with `BACKEND_URL` pointing to it.
+One page per side, with the list on the left and the selected feedback on the right (they take turns on a phone).
+The address says which one is open (`/feedback/<id>`), so it can be shared:
+
+- **User** (`/feedback`): *My feedback*. The profile menu has *Give feedback* (a dialog) and *My feedback*.
+- **Admin** (`/admin/feedback`): every feedback, with a second tab for the types and the statuses. It is in an
+  *Administration* group of the profile menu, which only admins see. The sidebar stays light on purpose.
+
+Types and statuses are data, not code: an admin adds, edits or archives them. An author can close or reopen their own
+feedback; only admins change the status or the type. To see it: `docker compose up` (the `dev` user of the Keycloak
+realm is an admin), or run the backend with `AUTH_MODE=full-access` and `pnpm dev` with `BACKEND_URL` pointing to it.
 
 ## Authentication (BFF)
 
