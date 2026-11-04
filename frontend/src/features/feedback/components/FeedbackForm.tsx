@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useReferences } from '../api/references'
 import { offered } from '../format'
 import type { NewFeedback } from '../types'
-import { ErrorNotice } from './ErrorNotice'
+import { ErrorNotice } from '@/components/ErrorNotice'
 import { OptionSelect } from './OptionSelect'
 import { ScreenshotPicker } from './ScreenshotPicker'
 

@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useArchiveReference, useReferences, useSaveReference } from '../api/references'
 import { formatDate } from '../format'
 import type { FeedbackStatus, FeedbackType } from '../types'
-import { ErrorNotice } from './ErrorNotice'
+import { ErrorNotice } from '@/components/ErrorNotice'
 import { ReferenceBadge } from './ReferenceBadge'
 import { ReferenceFormDialog } from './ReferenceFormDialog'
 
