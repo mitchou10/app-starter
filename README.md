@@ -26,8 +26,62 @@ frontend/   React + Vite + pnpm + Tailwind + shadcn/ui + i18next   (own version,
 
 ```bash
 docker compose up --build     # backend :8000, frontend :5173
-cd backend && uv sync && uv run pytest
+cd backend && uv sync && uv run pytest   # needs the test database, see Backend > Tests
 cd frontend && pnpm install && pnpm test
+```
+
+## Backend
+
+FastAPI, fully async (SQLAlchemy 2 + asyncpg, aioboto3), with small layers that each only know the one below:
+
+```
+app/routers/        HTTP only: read the request, call a service, build the response (deps.py wires a service together)
+app/schemas/        pydantic models of what goes out (and in): no logic, no database
+app/services/       the rules: no HTTP, no SQL. Raise their own errors (services/errors.py), routers map them to HTTP
+app/repositories/   the database, nothing else (one class per table)
+app/models/         SQLAlchemy tables (Base, UserProfile)
+app/storage/        object storage: an ObjectStore interface and its S3 implementation, nothing else knows about S3
+app/auth/           login (OIDC BFF), sessions, the current user
+app/config.py       every setting, from the environment (pydantic-settings)
+migrations/         Alembic
+```
+
+**Add a feature**: a model (and a migration), a repository, a service, a schema, a router, one line in `main.py`.
+Pydantic models are used at every border (settings, requests, responses, the current user, sessions).
+
+### Database and migrations
+
+PostgreSQL, `DATABASE_URL=postgresql+asyncpg://user:password@host:5432/db`. The schema only changes through Alembic:
+
+```bash
+cd backend
+uv run alembic revision --autogenerate -m "add something"   # after changing a model, then read the file
+uv run alembic upgrade head
+uv run alembic check                                          # fails if the models and the migrations differ
+```
+
+With `docker compose up`, the `migrate` service brings the database to the latest migration before the backend starts.
+
+### Object storage
+
+RustFS in development, any S3-compatible service in production. The usual `AWS_*` variables:
+`AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, plus `AWS_BUCKET` (the bucket is
+created on first use). RustFS console: http://localhost:9001 (`rustfsadmin` / `rustfsadmin`).
+
+### Profile photo
+
+`GET /api/me/profile`, then `GET` / `PUT` / `DELETE /api/me/avatar`. PNG, JPEG or WebP, 2 MB at most
+(`AVATAR_MAX_BYTES`): the type is read from the bytes, not from what the client says, and SVG is refused. The image
+is in the bucket under `avatars/<user>/<random>`, the database holds its key. In the frontend: the settings page, and
+the profile at the bottom of the sidebar.
+
+### Tests
+
+They run against a real PostgreSQL (the schema is built by the migrations) and a simulated S3:
+
+```bash
+docker compose -f docker-compose.test.yaml up -d --wait     # PostgreSQL on :55433
+cd backend && uv run pytest --cov
 ```
 
 ## Frontend
