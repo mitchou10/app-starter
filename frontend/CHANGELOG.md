@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/mitchou10/app-starter/compare/frontend-v0.1.0...frontend-v0.2.0) (2026-11-04)
+
+
+### Features
+
+* **frontend:** add the profile photo to the settings page and the sidebar ([54dcf0a](https://github.com/mitchou10/app-starter/commit/54dcf0a73f4eec96928e84c6e142b75680b5c602))
+
 ## 0.1.0 (2026-11-04)
 
 
