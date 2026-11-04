@@ -110,7 +110,8 @@
       "screenshots": "Captures d'écran (facultatif)",
       "required": "Ce champ est obligatoire.",
       "cancel": "Annuler",
-      "submit": "Envoyer"
+      "submit": "Envoyer",
+      "attachPage": "Joindre la page où je suis :"
     },
     "dialog": {
       "title": "Donner mon avis",
@@ -160,7 +161,8 @@
       "back": "Retour à la liste",
       "by": "par {{name}} le {{date}}",
       "label": "Retour sélectionné",
-      "select": "Sélectionnez un retour pour le lire et le suivre."
+      "select": "Sélectionnez un retour pour le lire et le suivre.",
+      "page": "Page :"
     },
     "tones": {
       "gray": "Gris",

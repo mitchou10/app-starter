@@ -110,7 +110,8 @@
       "screenshots": "Screenshots (optional)",
       "required": "This field is required.",
       "cancel": "Cancel",
-      "submit": "Send"
+      "submit": "Send",
+      "attachPage": "Attach the page I am on:"
     },
     "dialog": {
       "title": "Give feedback",
@@ -160,7 +161,8 @@
       "back": "Back to the list",
       "by": "by {{name}} on {{date}}",
       "label": "Selected feedback",
-      "select": "Select a feedback to read it and follow up."
+      "select": "Select a feedback to read it and follow up.",
+      "page": "Page:"
     },
     "tones": {
       "gray": "Gray",

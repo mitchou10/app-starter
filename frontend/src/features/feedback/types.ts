@@ -50,6 +50,8 @@ export interface Feedback {
   createdByUsername: string
   createdAt: string
   updatedAt: string
+  /** The address of the page the author was on when they opened the form (path and query), or none. */
+  page: string | null
   attachments: Attachment[]
   messages: FeedbackMessage[]
 }
@@ -59,6 +61,7 @@ export interface NewFeedback {
   description: string
   typeId: string
   files: File[]
+  page: string | null
 }
 
 export type ReferenceInput = Pick<Reference, 'name' | 'description' | 'tone'>

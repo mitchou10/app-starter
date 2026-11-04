@@ -1,11 +1,11 @@
 import { ChevronsUpDown, Languages, ListChecks, LogOut, MessageSquarePlus, Settings } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { useCurrentUser } from '@/auth/AuthProvider'
 import { UserAvatar } from '@/components/UserAvatar'
 import { ADMIN_NAV } from '@/layouts/appNav'
-import { FeedbackDialog } from '@/features/feedback/components/FeedbackDialog'
+import { useFeedback } from '@/features/feedback/FeedbackProvider'
+import { shortcutLabel } from '@/features/feedback/shortcut'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuShortcut,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
@@ -28,7 +29,7 @@ export function UserMenu() {
   const { t } = useTranslation()
   const { user, avatarVersion, logout } = useCurrentUser()
   const { current, languages, change } = useLanguage()
-  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const { openDialog } = useFeedback()
   if (!user) return null
 
   const name = user.name || user.username || user.email
@@ -60,9 +61,10 @@ export function UserMenu() {
 
             <DropdownMenuGroup>
               <DropdownMenuLabel>{t('userMenu.feedback')}</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+              <DropdownMenuItem onClick={openDialog} aria-keyshortcuts="Control+Shift+F Meta+Shift+F">
                 <MessageSquarePlus aria-hidden />
                 {t('userMenu.giveFeedback')}
+                <DropdownMenuShortcut>{shortcutLabel()}</DropdownMenuShortcut>
               </DropdownMenuItem>
               <DropdownMenuItem render={<Link to="/feedback" />}>
                 <ListChecks aria-hidden />
@@ -115,8 +117,6 @@ export function UserMenu() {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-      {/* Outside the menu: the menu unmounts its content when it closes, and the dialog must stay. */}
-      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </SidebarMenu>
   )
 }

@@ -48,7 +48,7 @@ it('filters by type and says so when nothing matches', async () => {
 
 async function openDialog() {
   await userEvent.click(screen.getByRole('button', { name: 'Open the user menu' }))
-  await userEvent.click(await screen.findByRole('menuitem', { name: 'Give feedback' }))
+  await userEvent.click(await screen.findByRole('menuitem', { name: /Give feedback/ }))
   return screen.findByRole('dialog')
 }
 

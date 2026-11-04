@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useLocation } from 'react-router'
 import { useCurrentUser } from '@/auth/AuthProvider'
 import { buildMockFeedbacks, CLOSED_BY_AUTHOR, DEFAULT_STATUSES, DEFAULT_TYPES, nextId, REOPENED } from './mock/data'
 import type {
@@ -11,7 +12,17 @@ import type {
   ReferenceInput,
 } from './types'
 
+interface FeedbackDialogState {
+  open: boolean
+  /** The page the user was on when the dialog opened: it is attached to the feedback if they agree. */
+  page: string | null
+}
+
 interface FeedbackStore {
+  dialog: FeedbackDialogState
+  /** Opens "Give feedback", remembering the page the user is on right now. */
+  openDialog: () => void
+  closeDialog: () => void
   types: FeedbackType[]
   statuses: FeedbackStatus[]
   feedbacks: Feedback[]
@@ -48,6 +59,10 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
   const [types, setTypes] = useState(DEFAULT_TYPES)
   const [statuses, setStatuses] = useState(DEFAULT_STATUSES)
   const [feedbacks, setFeedbacks] = useState(() => buildMockFeedbacks(me))
+  const [dialog, setDialog] = useState<FeedbackDialogState>({ open: false, page: null })
+  const location = useLocation()
+  const here = useRef('')
+  here.current = location.pathname + location.search
 
   const now = () => new Date().toISOString()
 
@@ -75,6 +90,9 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
       )
 
     return {
+      dialog,
+      openDialog: () => setDialog({ open: true, page: here.current }),
+      closeDialog: () => setDialog((current) => ({ ...current, open: false })),
       types,
       statuses,
       feedbacks,
@@ -91,6 +109,7 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
           createdByUsername: me.username,
           createdAt: now(),
           updatedAt: now(),
+          page: input.page,
           attachments: toAttachments(input.files),
           messages: [],
         }
@@ -138,7 +157,7 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
         else setStatuses(set)
       },
     }
-  }, [types, statuses, feedbacks, me, update])
+  }, [dialog, types, statuses, feedbacks, me, update])
 
   return <FeedbackContext.Provider value={store}>{children}</FeedbackContext.Provider>
 }
