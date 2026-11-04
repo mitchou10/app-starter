@@ -1,4 +1,4 @@
-/** The shapes of the feedback module. They follow the planned API, so the mock store can be swapped for it. */
+/** The feedback module as the screens see it: camelCase, with what the screens need and no more. */
 
 export type Tone = 'gray' | 'blue' | 'green' | 'amber' | 'red' | 'violet'
 
@@ -7,8 +7,10 @@ interface Reference {
   name: string
   description: string
   tone: Tone
-  /** None for the values shipped with the app. */
+  position: number
+  /** Who added it: the account and the name they had then. None for the values shipped with the app. */
   createdBy: string | null
+  createdByUsername: string | null
   createdAt: string
   /** Archived values stay on existing feedback but are no longer offered. */
   archived: boolean
@@ -17,14 +19,18 @@ interface Reference {
 export type FeedbackType = Reference
 
 export interface FeedbackStatus extends Reference {
-  /** A closed feedback is in the "closed" list and stops asking for attention. */
+  /** The statuses the app itself uses have a key: `new` and `closed`. */
+  key: string | null
+  /** A closed feedback stops asking for attention. */
   isClosed: boolean
-  position: number
 }
 
 export interface Attachment {
   id: string
   filename: string
+  contentType: string
+  sizeBytes: number
+  /** Where the image is served from (the session cookie is enough). */
   url: string
 }
 
@@ -40,20 +46,25 @@ export interface FeedbackMessage {
   attachments: Attachment[]
 }
 
-export interface Feedback {
+/** A line of a list: no description, no screenshots. */
+export interface FeedbackSummary {
   id: string
   title: string
-  description: string
   typeId: string
   statusId: string
   createdBy: string
   createdByUsername: string
   createdAt: string
   updatedAt: string
-  /** The address of the page the author was on when they opened the form (path and query), or none. */
+  /** Answers only: the changes of status do not count. */
+  repliesCount: number
+}
+
+export interface Feedback extends Omit<FeedbackSummary, 'repliesCount'> {
+  description: string
+  /** The page the author was on when they opened the form (path and query), or none. */
   page: string | null
   attachments: Attachment[]
-  messages: FeedbackMessage[]
 }
 
 export interface NewFeedback {
@@ -64,4 +75,24 @@ export interface NewFeedback {
   page: string | null
 }
 
-export type ReferenceInput = Pick<Reference, 'name' | 'description' | 'tone'>
+export interface ReferenceInput {
+  name: string
+  description: string
+  tone: Tone
+  isClosed?: boolean
+}
+
+/** One page of a list, with how many there are in all. */
+export interface Page<T> {
+  items: T[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export interface MessagesPage {
+  items: FeedbackMessage[]
+  total: number
+  /** Pass it as `before` to get the older messages; none when there are no more. */
+  nextBefore: string | null
+}

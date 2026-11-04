@@ -104,6 +104,27 @@
       "groups": [
         "team-a"
       ]
+    },
+    {
+      "username": "user",
+      "email": "user@example.com",
+      "firstName": "Simple",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ],
+      "groups": [
+        "team-a"
+      ]
     }
   ]
 }
