@@ -65,6 +65,7 @@ The defaults suit local development; **change the ones marked \*** before any re
 | `FEEDBACK_MAX_ATTACHMENTS` | `5` | Screenshots per feedback or answer |
 | `FEEDBACK_ATTACHMENT_MAX_BYTES` | 5 MiB | Largest screenshot |
 | `PAGE_SIZE_MAX` | `50` | Largest `limit` a list or a follow-up can ask for |
+| `NOTIFICATION_API_KEYS` | empty | The applications allowed to emit notifications, as `name=key` pairs separated by commas (a key under 16 characters is ignored); the name becomes the `source` \* |
 | `AUTH_MODE` | `oidc` | `oidc`, or `full-access`: no login, a fixed admin (development and tests only) |
 | `OIDC_ISSUER` | empty | The provider's issuer URL; empty means no login is possible |
 | `OIDC_DISCOVERY_URL` | `<issuer>/.well-known/openid-configuration` | Where to read the discovery document when the provider is not reached on its public address |
@@ -132,6 +133,37 @@ change).
   meanwhile moves nothing.
 - **Errors** are raised by the services (`services/errors.py`) and turned into status codes in one place,
   `routers/errors.py`.
+
+### Notifications API
+
+Short messages that applications send to users, read in the app. Nothing leaves the app: no e-mail, no push. One page
+for everybody, the same for a user and for an admin.
+
+| Who | Route |
+| --- | --- |
+| A user | `GET /api/notifications` (`unread`, `limit`, `offset`), `GET /api/notifications/unread-count` (the badge) |
+| | `PATCH /api/notifications/{id}` (`{"read": true}`, or `false`), `POST /api/notifications/read-all` |
+| An application | `POST /api/emit/notifications`, authenticated by the `X-Api-Key` header |
+
+A notification has a **title**, a **description**, an optional **link** (`url`), the application that **emitted** it
+(`source`), its **recipient** (`user_id`, the `sub` of the user) and whether it was **read** (`read_at`). Each
+recipient has their own copy, with their own read state.
+
+- **Emitting** is for the other applications, not for users: each has a key in `NOTIFICATION_API_KEYS`
+  (`billing=<key>,reports=<key>`). The `source` is the name the key belongs to, so an application cannot claim to be
+  another. Nobody can emit while the setting is empty.
+
+  ```bash
+  curl -X POST http://localhost:8000/api/emit/notifications \
+    -H "X-Api-Key: dev-only-key-not-for-prod" -H "Content-Type: application/json" \
+    -d '{"user_ids": ["<sub of the user>"], "title": "Invoice ready",
+         "description": "Your invoice for October is available.",
+         "url": "https://billing.example.com/invoices/42"}'
+  ```
+
+- **The link** is a path of this app (`/feedback/…`, opened in the app) or an `http(s)` address of another application
+  (opened in a new tab). Nothing else is accepted, not `javascript:` nor `//host`, in the API and in the database.
+- Somebody else's notification does not exist (404). Reading twice keeps the first read date.
 
 ### Profile photo
 

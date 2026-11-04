@@ -22,6 +22,8 @@ services:
       AWS_SECRET_ACCESS_KEY: rustfsadmin # dev only
       AWS_REGION: us-east-1
       AWS_BUCKET: app
+      # Other applications emit notifications with these keys, as name=key (16 characters at least). Dev only.
+      NOTIFICATION_API_KEYS: demo=dev-only-key-not-for-prod
     depends_on:
       keycloak:
         condition: service_healthy
