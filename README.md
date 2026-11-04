@@ -168,9 +168,18 @@ the backend later; the screens only use `useFeedback()`.
 One page per side, with the list on the left and the selected feedback on the right (they take turns on a phone).
 The address says which one is open (`/feedback/<id>`), so it can be shared:
 
-- **User** (`/feedback`): *My feedback*. The profile menu has *Give feedback* (a dialog) and *My feedback*.
+- **User** (`/feedback`): *My feedback*. The profile menu has a *Feedback* group: *Give feedback* (a dialog) and *Manage my feedback*.
 - **Admin** (`/admin/feedback`): every feedback, with a second tab for the types and the statuses. It is in an
   *Administration* group of the profile menu, which only admins see. The sidebar stays light on purpose.
+
+Nothing scrolls the page: the list, the follow-up and the description each scroll in their own box.
+
+- **Follow-up**: opens on the latest message and goes back there when one is added. Only the latest 10 messages are
+  shown; *Show older messages* loads the previous page at the top without moving what is being read. Changes of
+  status are part of it.
+- **List**: pages of 10 with *Show more* and a count (`10 of 34`); a new search starts again from the first page, and
+  the feedback being read always stays in the list. The page size is `LIST_PAGE_SIZE` (`pagination.ts`); the backend will
+  take the same `limit`.
 
 Types and statuses are data, not code: an admin adds, edits or archives them. An author can close or reopen their own
 feedback; only admins change the status or the type. To see it: `docker compose up` (the `dev` user of the Keycloak
