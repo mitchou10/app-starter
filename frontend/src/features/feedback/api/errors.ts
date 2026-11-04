@@ -7,6 +7,7 @@ export type ErrorKind =
   | 'forbidden'
   | 'notFound'
   | 'duplicate'
+  | 'conflict'
   | 'invalid'
   | 'network'
   | 'failed'
@@ -20,7 +21,8 @@ export function errorKind(error: unknown): ErrorKind {
     case 404:
       return 'notFound'
     case 409:
-      return 'duplicate'
+      // A name taken, or a value the app itself relies on: the sentence of the backend tells which.
+      return /already exists/i.test(error.message) ? 'duplicate' : 'conflict'
     case 413:
       return 'tooLarge'
     case 415:

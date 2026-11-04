@@ -2,13 +2,13 @@ import { MessageSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { cn } from '@/lib/utils'
-import { useFeedback } from '../FeedbackProvider'
+import { useReferences } from '../api/references'
 import { byId, formatDate } from '../format'
-import type { Feedback } from '../types'
+import type { FeedbackSummary } from '../types'
 import { ReferenceBadge } from './ReferenceBadge'
 
 interface FeedbackListProps {
-  feedbacks: Feedback[]
+  feedbacks: FeedbackSummary[]
   /** The feedback being read, highlighted. */
   selectedId?: string
   /** Where an item leads: `${basePath}/${id}`. */
@@ -20,7 +20,7 @@ interface FeedbackListProps {
 /** The column of feedback on the left of the page: title, badges and date, one block each. */
 export function FeedbackList({ feedbacks, selectedId, basePath, showAuthor = false }: FeedbackListProps) {
   const { t, i18n } = useTranslation()
-  const { types, statuses } = useFeedback()
+  const { types, statuses } = useReferences()
 
   if (feedbacks.length === 0) {
     return <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">{t('feedback.list.empty')}</p>
@@ -31,7 +31,7 @@ export function FeedbackList({ feedbacks, selectedId, basePath, showAuthor = fal
       {feedbacks.map((feedback) => {
         const type = byId(types, feedback.typeId)
         const status = byId(statuses, feedback.statusId)
-        const replies = feedback.messages.filter((message) => message.kind === 'comment').length
+        const replies = feedback.repliesCount
         const selected = feedback.id === selectedId
         return (
           <li key={feedback.id}>

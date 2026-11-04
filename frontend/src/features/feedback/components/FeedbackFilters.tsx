@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useFeedback } from '../FeedbackProvider'
+import { useReferences } from '../api/references'
 import { OptionSelect } from './OptionSelect'
 
 export interface Filters {
@@ -11,7 +11,7 @@ export const NO_FILTER: Filters = { status: 'all', type: 'all' }
 
 export function FeedbackFilters({ value, onChange }: { value: Filters; onChange: (filters: Filters) => void }) {
   const { t } = useTranslation()
-  const { statuses, types } = useFeedback()
+  const { statuses, types } = useReferences()
   const all = (label: string) => ({ value: 'all', label })
 
   return (

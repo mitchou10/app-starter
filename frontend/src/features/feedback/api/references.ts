@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './client'
 import { toStatus, toType } from './mappers'
 import { keys } from './keys'
-import type { FeedbackStatus, FeedbackType, ReferenceInput } from './model'
+import type { FeedbackStatus, FeedbackType, ReferenceInput } from '../types'
 import type { WireReference, WireStatus } from './wire'
 
 const FIVE_MINUTES = 5 * 60_000

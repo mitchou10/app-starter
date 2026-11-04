@@ -1,12 +1,10 @@
+import { QueryClientProvider } from '@tanstack/react-query'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router'
-import { afterEach, beforeEach, expect, it } from 'vitest'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { stubBackend, testQueryClient } from '@/test/render'
 import { FeedbackThread } from './components/FeedbackThread'
-import { FeedbackProvider } from './FeedbackProvider'
 import type { FeedbackMessage } from './types'
-import { AuthProvider } from '@/auth/AuthProvider'
-import { ada, stubBackend } from '@/test/render'
 
 // jsdom does no layout: a message is 100px tall, so the height of the box follows what is displayed.
 const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollHeight')
@@ -34,67 +32,83 @@ const message = (n: number): FeedbackMessage => ({
   newStatusId: null,
   attachments: [],
 })
-const many = (count: number) => Array.from({ length: count }, (_, i) => message(i + 1))
+/** The messages `from` to `to`, oldest first. */
+const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => message(from + i))
 
-function renderThread(messages: FeedbackMessage[], pageSize?: number) {
-  stubBackend(ada)
-  const ui = (list: FeedbackMessage[]) => (
-    <AuthProvider>
-      <MemoryRouter>
-        <FeedbackProvider>
-          <FeedbackThread messages={list} pageSize={pageSize} />
-        </FeedbackProvider>
-      </MemoryRouter>
-    </AuthProvider>
+type Props = Partial<Parameters<typeof FeedbackThread>[0]>
+
+function renderThread(props: Props) {
+  stubBackend(null)
+  const client = testQueryClient()
+  const ui = (next: Props) => (
+    <QueryClientProvider client={client}>
+      <FeedbackThread messages={[]} hidden={0} onLoadOlder={() => {}} {...next} />
+    </QueryClientProvider>
   )
-  const view = render(ui(messages))
-  return { ...view, update: (list: FeedbackMessage[]) => view.rerender(ui(list)) }
+  const view = render(ui(props))
+  return { ...view, update: (next: Props) => view.rerender(ui(next)) }
 }
 
-it('says so when there is no answer yet', () => {
-  renderThread([])
+it('says so when there is no answer yet, and while it loads', () => {
+  const { update } = renderThread({ messages: [] })
   expect(screen.getByText('No answer yet.')).toBeInTheDocument()
+  update({ loading: true })
+  expect(screen.getByText('Loading...')).toBeInTheDocument()
+  expect(screen.queryByText('No answer yet.')).not.toBeInTheDocument()
+  expect(screen.getByRole('log')).toHaveAttribute('aria-busy', 'true')
 })
 
-it('shows everything when it fits in one page, with no button to load more', () => {
-  renderThread(many(4), 10)
+it('shows what it is given, with no button to load more when nothing is hidden', () => {
+  renderThread({ messages: range(1, 4), hidden: 0 })
   expect(within(screen.getByRole('log')).getAllByRole('listitem')).toHaveLength(4)
   expect(screen.queryByRole('button')).not.toBeInTheDocument()
 })
 
 it('opens on the latest message: the box is scrolled to the bottom', () => {
-  renderThread(many(30), 10)
+  renderThread({ messages: range(16, 25), hidden: 15 })
   expect(screen.getByRole('log').scrollTop).toBe(1000)
-  expect(screen.getByText('message 30')).toBeInTheDocument()
-  expect(screen.queryByText('message 20')).not.toBeInTheDocument()
+  expect(screen.getByText('message 25')).toBeInTheDocument()
 })
 
-it('pages the older messages in from the top, one page at a time', async () => {
-  renderThread(many(25), 10)
-  expect(screen.getByRole('button', { name: 'Show 10 older messages (15 hidden)' })).toBeInTheDocument()
-  await userEvent.click(screen.getByRole('button', { name: /Show 10 older/ }))
-  expect(screen.getByText('message 6')).toBeInTheDocument()
-  expect(screen.queryByText('message 5')).not.toBeInTheDocument()
-  await userEvent.click(screen.getByRole('button', { name: 'Show 5 older messages (5 hidden)' }))
-  expect(screen.getByText('message 1')).toBeInTheDocument()
+it('offers the next page of older messages, and says how many are hidden', async () => {
+  const onLoadOlder = vi.fn()
+  const { update } = renderThread({ messages: range(16, 25), hidden: 15, onLoadOlder })
+  await userEvent.click(screen.getByRole('button', { name: 'Show 10 older messages (15 hidden)' }))
+  expect(onLoadOlder).toHaveBeenCalledOnce()
+
+  update({ messages: range(16, 25), hidden: 5, onLoadOlder })
+  expect(screen.getByRole('button', { name: 'Show 5 older messages (5 hidden)' })).toBeInTheDocument()
+  update({ messages: range(1, 25), hidden: 0, onLoadOlder })
   expect(screen.queryByRole('button')).not.toBeInTheDocument()
 })
 
+it('cannot be asked twice while the older messages are on their way', () => {
+  renderThread({ messages: range(16, 25), hidden: 15, loadingOlder: true })
+  expect(screen.getByRole('button', { name: /older messages/ })).toBeDisabled()
+})
+
 it('keeps the reader where they were when older messages are added above', async () => {
-  renderThread(many(25), 10)
+  const { update } = renderThread({ messages: range(16, 25), hidden: 15 })
   const log = screen.getByRole('log')
   expect(log.scrollTop).toBe(1000) // 10 messages shown
   await userEvent.click(screen.getByRole('button', { name: /Show 10 older/ }))
+  update({ messages: range(6, 25), hidden: 5 })
   // 10 more messages above (+1000px): the scroll moves by as much, so what was on screen has not moved
   expect(log.scrollTop).toBe(2000)
 })
 
 it('goes back to the latest message when a new one arrives', () => {
-  const { update } = renderThread(many(5), 10)
+  const { update } = renderThread({ messages: range(1, 5) })
   const log = screen.getByRole('log')
   expect(log.scrollTop).toBe(500)
   log.scrollTop = 100 // the reader had scrolled up
-  act(() => update(many(6)))
+  act(() => update({ messages: range(1, 6) }))
   expect(log.scrollTop).toBe(600)
   expect(screen.getByText('message 6')).toBeInTheDocument()
+})
+
+it('goes to the bottom once the messages have loaded', () => {
+  const { update } = renderThread({ loading: true, messages: [] })
+  update({ loading: false, messages: range(1, 8) })
+  expect(screen.getByRole('log').scrollTop).toBe(800)
 })

@@ -1,6 +1,6 @@
 /** The shapes the backend sends (snake_case). Only the mappers read them. */
 
-import type { Tone } from './model'
+import type { Tone } from '../types'
 
 export interface WireAttachment {
   id: string

@@ -4,7 +4,7 @@ import { LIST_PAGE_SIZE } from '../pagination'
 import { api } from './client'
 import { keys } from './keys'
 import { toSummary } from './mappers'
-import type { FeedbackSummary } from './model'
+import type { FeedbackSummary } from '../types'
 import type { WirePage, WireSummary } from './wire'
 
 export type Scope = 'mine' | 'all'
@@ -30,6 +30,7 @@ export function useFeedbackList(scope: Scope, filters: Filters) {
     total: query.data?.pages[0]?.total ?? 0,
     isLoading: query.isPending,
     isError: query.isError,
+    error: query.error,
     hasMore: query.hasNextPage,
     loadMore: () => void query.fetchNextPage(),
     loadingMore: query.isFetchingNextPage,

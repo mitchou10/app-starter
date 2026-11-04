@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import type { FeedbackStatus, FeedbackType, ReferenceInput, Tone } from '../types'
+import { ErrorNotice } from './ErrorNotice'
 import { OptionSelect } from './OptionSelect'
 import { TONES } from './tone'
 
@@ -18,7 +19,10 @@ interface ReferenceFormDialogProps {
   item?: Item
   /** Statuses have a "closed" flag, types do not. */
   withClosed: boolean
-  onSave: (input: ReferenceInput & { isClosed: boolean }) => void
+  /** Saves, and calls `done` once it worked: the dialog stays open, with the error, when it did not. */
+  onSave: (input: ReferenceInput, done: () => void) => void
+  saving?: boolean
+  error?: unknown
 }
 
 export function ReferenceFormDialog(props: ReferenceFormDialogProps) {
@@ -30,7 +34,7 @@ export function ReferenceFormDialog(props: ReferenceFormDialogProps) {
   )
 }
 
-function Form({ onOpenChange, item, withClosed, onSave }: ReferenceFormDialogProps) {
+function Form({ onOpenChange, item, withClosed, onSave, saving = false, error }: ReferenceFormDialogProps) {
   const { t } = useTranslation()
   const [name, setName] = useState(item?.name ?? '')
   const [description, setDescription] = useState(item?.description ?? '')
@@ -42,9 +46,8 @@ function Form({ onOpenChange, item, withClosed, onSave }: ReferenceFormDialogPro
       className="grid gap-4"
       onSubmit={(event) => {
         event.preventDefault()
-        if (!name.trim()) return
-        onSave({ name: name.trim(), description: description.trim(), tone, isClosed })
-        onOpenChange(false)
+        if (!name.trim() || saving) return
+        onSave({ name: name.trim(), description: description.trim(), tone, ...(withClosed ? { isClosed } : {}) }, () => onOpenChange(false))
       }}
     >
       <DialogHeader>
@@ -73,11 +76,14 @@ function Form({ onOpenChange, item, withClosed, onSave }: ReferenceFormDialogPro
           {t('feedback.admin.isClosed')}
         </label>
       )}
+      <ErrorNotice error={error} />
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
           {t('feedback.form.cancel')}
         </Button>
-        <Button type="submit">{t('feedback.admin.save')}</Button>
+        <Button type="submit" disabled={saving}>
+          {t('feedback.admin.save')}
+        </Button>
       </div>
     </form>
   )

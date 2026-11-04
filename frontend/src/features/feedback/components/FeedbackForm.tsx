@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useFeedback } from '../FeedbackProvider'
+import { useReferences } from '../api/references'
 import { offered } from '../format'
 import type { NewFeedback } from '../types'
+import { ErrorNotice } from './ErrorNotice'
 import { OptionSelect } from './OptionSelect'
 import { ScreenshotPicker } from './ScreenshotPicker'
 
@@ -16,11 +17,14 @@ interface FeedbackFormProps {
   onCancel?: () => void
   /** The page the user was on, offered as an attachment. */
   page?: string | null
+  /** The request is on its way, or failed: the form shows it and keeps what was typed. */
+  pending?: boolean
+  error?: unknown
 }
 
-export function FeedbackForm({ onSubmit, onCancel, page = null }: FeedbackFormProps) {
+export function FeedbackForm({ onSubmit, onCancel, page = null, pending = false, error }: FeedbackFormProps) {
   const { t } = useTranslation()
-  const { types } = useFeedback()
+  const { types } = useReferences()
   const options = offered(types).map((type) => ({ value: type.id, label: type.name }))
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -39,7 +43,7 @@ export function FeedbackForm({ onSubmit, onCancel, page = null }: FeedbackFormPr
       onSubmit={(event) => {
         event.preventDefault()
         setTried(true)
-        if (valid) onSubmit({ title: title.trim(), description: description.trim(), typeId, files, page: attachPage ? page : null })
+        if (valid && !pending) onSubmit({ title: title.trim(), description: description.trim(), typeId, files, page: attachPage ? page : null })
       }}
     >
       <div className="grid gap-2">
@@ -74,13 +78,17 @@ export function FeedbackForm({ onSubmit, onCancel, page = null }: FeedbackFormPr
         </label>
       )}
 
+      <ErrorNotice error={error} />
+
       <div className="flex justify-end gap-2">
         {onCancel && (
           <Button type="button" variant="ghost" onClick={onCancel}>
             {t('feedback.form.cancel')}
           </Button>
         )}
-        <Button type="submit">{t('feedback.form.submit')}</Button>
+        <Button type="submit" disabled={pending}>
+          {t('feedback.form.submit')}
+        </Button>
       </div>
     </form>
   )

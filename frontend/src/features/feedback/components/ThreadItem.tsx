@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { UserAvatar } from '@/components/UserAvatar'
-import { useFeedback } from '../FeedbackProvider'
+import { useReferences } from '../api/references'
 import { byId, formatDate } from '../format'
 import type { FeedbackMessage } from '../types'
 import { ReferenceBadge } from './ReferenceBadge'
@@ -10,7 +10,7 @@ import { Screenshots } from './Screenshots'
 /** One line of the follow-up: an answer, or a change of status. */
 export function ThreadItem({ message }: { message: FeedbackMessage }) {
   const { t, i18n } = useTranslation()
-  const { statuses } = useFeedback()
+  const { statuses } = useReferences()
   const when = formatDate(message.createdAt, i18n.language, true)
 
   if (message.kind === 'status_change') {

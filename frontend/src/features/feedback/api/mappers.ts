@@ -6,7 +6,7 @@ import type {
   FeedbackSummary,
   FeedbackType,
   MessagesPage,
-} from './model'
+} from '../types'
 import type {
   WireAttachment,
   WireFeedback,
