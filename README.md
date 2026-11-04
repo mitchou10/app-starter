@@ -158,12 +158,29 @@ Components stay small, take their texts as props and know nothing about i18n; on
 `UserMenu` and `AuthButton` call `t()`. To adapt the landing page in a new project: edit the texts in
 `src/i18n/locales/*.json`, the list in `content.ts`, and add or remove sections in `LandingPage.tsx`.
 
-### Feedback module (mockups)
+### Feedback module
 
 Users send feedback (title, description, type, screenshots) from their profile menu and follow it; admins answer and
-move it forward. The screens are built in `src/features/feedback/` on an **in-memory mock** (`FeedbackProvider`, with
-sample data in `mock/data.ts`): nothing is saved, a reload starts again. Each function of the mock becomes a call to
-the backend later; the screens only use `useFeedback()`.
+move it forward. The screens are in `src/features/feedback/` and talk to the backend's [feedback API](#feedback-api)
+through [TanStack Query](https://tanstack.com/query):
+
+```
+api/            client.ts (fetch + the errors of the backend), wire.ts (what it sends), mappers.ts, types.ts (what the
+                screens use), and one file per need: references, list, detail, thread, create
+components/     the screens' pieces, one per file
+pages/          the pages
+```
+
+- The screens never call `fetch`: they use the hooks of `api/` (`useFeedbackList`, `useThread`, `useReply`...), which
+  keep the cache and refresh it after a change. The cache keys are in `api/keys.ts`.
+- **The lists** are paginated by the server (`limit` and `offset`): *Show more* fetches the next page, and changing a
+  filter starts again. The follow-up is paginated by cursor from the newest message. When messages are added, the newest
+  page is **merged** into the cache (`refreshNewest`) rather than refetched: refetching an infinite query reloads every
+  page from its saved cursor, which would leave a gap. The open feedback is refreshed every 15 seconds
+  (`useLiveRefresh`), only while the page is visible.
+- **Errors** of the backend become a sentence (`api/errors.ts`, the translations `feedback.errors.*`).
+- **Tests** run against `src/test/fakeFeedbackApi.ts`, the API in memory with the rules of the real one (who sees what,
+  who may change what, filters, pages, cursors). The real backend is tested on its own side.
 
 One page per side, with the list on the left and the selected feedback on the right (they take turns on a phone).
 The address says which one is open (`/feedback/<id>`), so it can be shared:
@@ -175,7 +192,7 @@ The address says which one is open (`/feedback/<id>`), so it can be shared:
 **Give feedback** is a modal, opened from the profile menu, the *New feedback* button or the keyboard shortcut
 **Ctrl+Shift+F** (⌘⇧F on a Mac) from anywhere in the app. Plain Ctrl+F is the browser's "find in page", so it is not
 taken; the key is one constant, `SHORTCUT_KEY` in `shortcut.ts`. The modal is mounted once in the app layout
-(`FeedbackLauncher`) and its state is in `FeedbackProvider`. The page the user is on when it opens (path and query)
+(`FeedbackLauncher`) and its state is in `FeedbackDialogProvider`. The page the user is on when it opens (path and query)
 is captured at that moment and offered as a checkbox, *Attach the page I am on*; the feedback then shows it as a link,
 which tells the team where the problem was.
 
@@ -185,12 +202,13 @@ Nothing scrolls the page: the list, the follow-up and the description each scrol
   shown; *Show older messages* loads the previous page at the top without moving what is being read. Changes of
   status are part of it.
 - **List**: pages of 10 with *Show more* and a count (`10 of 34`); a new search starts again from the first page, and
-  the feedback being read always stays in the list. The page size is `LIST_PAGE_SIZE` (`pagination.ts`); the backend will
-  take the same `limit`.
+  the feedback being read always stays in the list. The page size is `LIST_PAGE_SIZE` (`pagination.ts`), sent to the backend as
+  `limit`.
 
 Types and statuses are data, not code: an admin adds, edits or archives them. An author can close or reopen their own
-feedback; only admins change the status or the type. To see it: `docker compose up` (the `dev` user of the Keycloak
-realm is an admin), or run the backend with `AUTH_MODE=full-access` and `pnpm dev` with `BACKEND_URL` pointing to it.
+feedback; only admins change the status or the type. To see it: `docker compose up` (the `dev` / `dev` user of the Keycloak realm is an admin, `user` / `user` is a plain user: a
+plain author can only close or reopen their feedback), or run the backend with `AUTH_MODE=full-access` (a fixed admin)
+and `pnpm dev` with `BACKEND_URL` pointing to it.
 
 ## Authentication (BFF)
 
