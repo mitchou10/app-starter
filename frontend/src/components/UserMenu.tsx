@@ -58,14 +58,17 @@ export function UserMenu() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
-              <MessageSquarePlus aria-hidden />
-              {t('userMenu.giveFeedback')}
-            </DropdownMenuItem>
-            <DropdownMenuItem render={<Link to="/feedback" />}>
-              <ListChecks aria-hidden />
-              {t('userMenu.myFeedback')}
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>{t('userMenu.feedback')}</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+                <MessageSquarePlus aria-hidden />
+                {t('userMenu.giveFeedback')}
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link to="/feedback" />}>
+                <ListChecks aria-hidden />
+                {t('userMenu.myFeedback')}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem render={<Link to="/settings" />}>

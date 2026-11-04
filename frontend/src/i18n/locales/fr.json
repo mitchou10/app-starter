@@ -66,8 +66,9 @@
     "language": "Langue",
     "signOut": "Se déconnecter",
     "giveFeedback": "Donner mon avis",
-    "myFeedback": "Mes retours",
-    "admin": "Administration"
+    "myFeedback": "Gérer mes retours",
+    "admin": "Administration",
+    "feedback": "Retours"
   },
   "appHome": {
     "welcome": "Bienvenue, {{name}}",
@@ -133,11 +134,16 @@
       "myTitle": "Mes retours",
       "myDescription": "Ce que vous nous avez envoyé et où cela en est.",
       "new": "Nouveau retour",
-      "label": "Liste des retours"
+      "label": "Liste des retours",
+      "more": "Afficher {{count}} de plus",
+      "count": "{{shown}} sur {{total}}"
     },
     "thread": {
       "statusChanged": "{{name}} a changé le statut",
-      "staff": "Équipe"
+      "staff": "Équipe",
+      "label": "Suivi",
+      "empty": "Pas encore de réponse.",
+      "older": "Afficher {{count}} messages plus anciens ({{total}} masqués)"
     },
     "reply": {
       "label": "Votre réponse",
