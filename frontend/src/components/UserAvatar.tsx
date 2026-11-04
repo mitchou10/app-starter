@@ -1,5 +1,5 @@
 import type { CurrentUser } from '@/auth/AuthProvider'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 type Person = Pick<CurrentUser, 'name' | 'username' | 'email'>
 
@@ -18,14 +18,21 @@ interface UserAvatarProps {
   user: Person
   /** Version of the photo (see AuthProvider): without one, only the initials are shown. */
   version?: number | null
+  /** Shows a dot on the avatar, and says what it means to screen readers (the number of unread notifications). */
+  badge?: string
   className?: string
 }
 
-export function UserAvatar({ user, version, className }: UserAvatarProps) {
+export function UserAvatar({ user, version, badge, className }: UserAvatarProps) {
   return (
     <Avatar className={className}>
       {version != null && <AvatarImage src={`/api/me/avatar?v=${version}`} alt="" />}
       <AvatarFallback>{initials(user)}</AvatarFallback>
+      {badge && (
+        <AvatarBadge className="bg-destructive">
+          <span className="sr-only">{badge}</span>
+        </AvatarBadge>
+      )}
     </Avatar>
   )
 }

@@ -3,6 +3,7 @@ import { RequireAdmin } from '@/auth/RequireAdmin'
 import { RequireAuth } from '@/auth/RequireAuth'
 import { AdminFeedbackPage } from '@/features/feedback/pages/AdminFeedbackPage'
 import { MyFeedbackPage } from '@/features/feedback/pages/MyFeedbackPage'
+import { NotificationsPage } from '@/features/notifications/pages/NotificationsPage'
 import { LandingPage } from '@/features/landing/LandingPage'
 import { AppLayout } from '@/layouts/AppLayout'
 import { RootLayout } from '@/layouts/RootLayout'
@@ -34,6 +35,7 @@ export const routes: RouteObject[] = [
         children: [
           { path: 'app', element: <AppHomePage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'notifications', element: <NotificationsPage /> },
           { path: 'feedback', element: <MyFeedbackPage /> },
           { path: 'feedback/:id', element: <MyFeedbackPage /> },
           {
