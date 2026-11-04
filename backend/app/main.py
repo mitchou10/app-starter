@@ -3,7 +3,16 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth.router import router as auth_router
 from app.config import settings
-from app.routers import admin_feedback_references, feedback_references, health, profile
+from app.routers import (
+    admin_feedback,
+    admin_feedback_references,
+    feedback,
+    feedback_attachments,
+    feedback_messages,
+    feedback_references,
+    health,
+    profile,
+)
 from app.routers.errors import register_error_handlers
 
 app = FastAPI(title=settings.APP_NAME, docs_url="/api/docs", openapi_url="/api/openapi.json")
@@ -26,3 +35,7 @@ app.include_router(health.router)
 app.include_router(profile.router)
 app.include_router(feedback_references.router)
 app.include_router(admin_feedback_references.router)
+app.include_router(feedback.router)
+app.include_router(feedback_messages.router)
+app.include_router(feedback_attachments.router)
+app.include_router(admin_feedback.router)

@@ -8,8 +8,9 @@ class Repository:
     def __init__(self, db: AsyncSession) -> None:
         self._db = db
 
+    async def flush(self) -> None:
+        """Writes what was added so far, without ending the transaction: a row that others point to goes first."""
+        await self._db.flush()
+
     async def commit(self) -> None:
         await self._db.commit()
-
-    async def rollback(self) -> None:
-        await self._db.rollback()
