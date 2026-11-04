@@ -61,7 +61,8 @@ it('signs out locally when the provider has no logout url', async () => {
 it('switches the language', async () => {
   stubFetch(() => ({ ok: false, json: async () => ({}) }))
   render(<App />)
-  await userEvent.click(await screen.findByRole('button', { name: 'Français' }))
+  await userEvent.click(await screen.findByRole('combobox', { name: 'Language' }))
+  await userEvent.click(await screen.findByRole('option', { name: 'Français' }))
   expect(await screen.findByRole('button', { name: 'Se connecter' })).toBeInTheDocument()
   expect(localStorage.getItem('i18nextLng')).toBe('fr')
 })
