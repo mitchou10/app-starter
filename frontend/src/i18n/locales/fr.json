@@ -74,5 +74,15 @@
     "name": "Nom",
     "email": "E-mail",
     "roles": "Rôles"
+  },
+  "profile": {
+    "change": "Changer la photo",
+    "remove": "Supprimer la photo",
+    "hint": "PNG, JPEG ou WebP, 2 Mo au maximum.",
+    "errors": {
+      "tooLarge": "Cette photo est trop volumineuse (2 Mo au maximum).",
+      "unsupported": "Ce fichier n'est pas une image PNG, JPEG ou WebP.",
+      "failed": "La photo n'a pas pu être enregistrée. Réessayez."
+    }
   }
 }

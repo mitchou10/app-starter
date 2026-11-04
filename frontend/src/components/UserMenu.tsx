@@ -23,7 +23,7 @@ import { useLanguage } from '@/i18n/useLanguage'
 /** The profile at the bottom of the sidebar. Click it: settings, language, sign out. */
 export function UserMenu() {
   const { t } = useTranslation()
-  const { user, logout } = useCurrentUser()
+  const { user, avatarVersion, logout } = useCurrentUser()
   const { current, languages, change } = useLanguage()
   if (!user) return null
 
@@ -34,7 +34,7 @@ export function UserMenu() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger render={<SidebarMenuButton size="lg" aria-label={t('userMenu.open')} />}>
-            <UserAvatar user={user} className="size-8" />
+            <UserAvatar user={user} version={avatarVersion} className="size-8" />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{name}</span>
               <span className="truncate text-xs text-muted-foreground">{user.email}</span>
@@ -45,7 +45,7 @@ export function UserMenu() {
           <DropdownMenuContent side="top" align="start" className="min-w-64">
             <DropdownMenuGroup>
               <DropdownMenuLabel className="flex items-center gap-2 text-foreground">
-                <UserAvatar user={user} className="size-8" />
+                <UserAvatar user={user} version={avatarVersion} className="size-8" />
                 <div className="grid text-left text-sm leading-tight">
                   <span className="truncate font-medium">{name}</span>
                   <span className="truncate text-xs text-muted-foreground">{user.email}</span>
