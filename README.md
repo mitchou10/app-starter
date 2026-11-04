@@ -276,6 +276,24 @@ feedback; only admins change the status or the type. To see it: `docker compose 
 plain author can only close or reopen their feedback), or run the backend with `AUTH_MODE=full-access` (a fixed admin)
 and `pnpm dev` with `BACKEND_URL` pointing to it.
 
+### Notifications (frontend)
+
+What the applications tell the user, read in `/notifications`: the same page for a user and for an admin, reached from
+*Notifications* in the profile menu (it is not in the sidebar). The code is in `src/features/notifications/`, on the
+[notifications API](#notifications-api), through the same `src/lib/api.ts` client as the feedback module.
+
+- **The badge**: a red dot on the avatar (shadcn's `AvatarBadge`), the count in the profile menu (`99+` above 99), and a
+  dot on the sidebar button on a phone, where the avatar is hidden. The count is asked again every 30 seconds while a
+  page is open (`UNREAD_POLL_MS`) and when the window gets the focus again, so a notification emitted meanwhile shows
+  without a reload. Screen readers get *Open the user menu, 3 unread notifications* (the plural is translated).
+- **The page**: newest first, by pages of 10 (*Show more*), with *All* and *Unread (n)* tabs, *Mark all as read*, and
+  for each notification the application that emitted it, its date and its description. *Mark as read* and *as unread* are
+  one click.
+- **The link**: a path of the app is opened in the app, the address of another application in a new tab
+  (`rel="noopener noreferrer"`, the host is shown on the button). Following a link reads the notification.
+- **Tests** use `src/test/fakeNotificationsApi.ts`, the API in memory: `stubBackend(user, undefined, { notifications: [...] })`
+  starts a user with some, and `emit()` adds one while a test runs.
+
 ## Authentication (BFF)
 
 The backend is a BFF: the browser never sees a token. `/api/auth/login` sends it to the identity provider
