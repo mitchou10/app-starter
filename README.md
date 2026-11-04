@@ -1,11 +1,11 @@
 # app-starter
 
-Template for new applications: a FastAPI backend, a Vue frontend, and a CI/CD built on the reusable
+Template for new applications: a FastAPI backend, a React frontend, and a CI/CD built on the reusable
 workflows of [Mitchou10/github-workflow](https://github.com/Mitchou10/github-workflow).
 
 ```
 backend/    FastAPI + uv        (own version, own CHANGELOG.md)
-frontend/   Vue + Vite + pnpm   (own version, own CHANGELOG.md)
+frontend/   React + Vite + pnpm + Tailwind + shadcn/ui + i18next   (own version, own CHANGELOG.md)
 .github/
   workflows/ci.yml       pull requests: lint, types, tests, scans, image builds, one `gate` check
   workflows/release.yml  release-please, then image build + scan + dev sync
@@ -29,6 +29,17 @@ docker compose up --build     # backend :8000, frontend :5173
 cd backend && uv sync && uv run pytest
 cd frontend && pnpm install && pnpm test
 ```
+
+## Frontend
+
+React 19 + TypeScript on Vite, styled with [Tailwind CSS](https://tailwindcss.com) 4 and
+[shadcn/ui](https://ui.shadcn.com) (components are copied into `src/components/ui`, so they are yours to edit).
+
+- Add a component: `cd frontend && pnpm dlx shadcn@latest add dialog`.
+- Translations: [react-i18next](https://react.i18next.com), files in `src/i18n/locales/` (`en`, `fr`). The language
+  is the saved choice, else the browser's, else English. Add a language by adding its file and listing it in
+  `src/i18n/index.ts`.
+- `/api` is proxied to the backend (`BACKEND_URL`), so the session cookie stays on the page's own origin.
 
 ## Authentication (BFF)
 
