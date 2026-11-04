@@ -19,6 +19,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "eralchemy>=1.7.0",
+    "graphviz>=0.21",
     "moto[s3,server]>=5.2.5",
     "pytest>=9.2.0",
     "pytest-asyncio>=1.4.1.post1",
