@@ -28,25 +28,33 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {APP_NAV.map(({ key, to, icon: Icon }) => (
-                <SidebarMenuItem key={key}>
-                  <SidebarMenuButton render={<Link to={to} />} isActive={pathname === to}>
-                    <Icon aria-hidden />
-                    {t(`appNav.${key}`)}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavGroup entries={APP_NAV} pathname={pathname} />
       </SidebarContent>
 
       <SidebarFooter>
         <UserMenu />
       </SidebarFooter>
     </Sidebar>
+  )
+}
+
+function NavGroup({ entries, pathname }: { entries: typeof APP_NAV; pathname: string }) {
+  const { t } = useTranslation()
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {entries.map(({ key, to, icon: Icon }) => (
+            <SidebarMenuItem key={key}>
+              <SidebarMenuButton render={<Link to={to} />} isActive={pathname === to}>
+                <Icon aria-hidden />
+                {t(`appNav.${key}`)}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   )
 }

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router'
+import { FeedbackProvider } from '@/features/feedback/FeedbackProvider'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AppSidebar } from './AppSidebar'
@@ -9,6 +10,7 @@ export function AppLayout() {
   const { t } = useTranslation()
 
   return (
+    <FeedbackProvider>
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
@@ -22,5 +24,6 @@ export function AppLayout() {
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
+    </FeedbackProvider>
   )
 }

@@ -16,6 +16,10 @@ window.matchMedia = (query: string) =>
     dispatchEvent: () => false,
   }) as MediaQueryList
 
+// jsdom has no object URLs, which the screenshot previews use.
+URL.createObjectURL = () => 'blob:mock'
+URL.revokeObjectURL = () => {}
+
 beforeEach(async () => {
   await i18n.changeLanguage('en') // the tests read English, whatever the machine's language
 })

@@ -7,6 +7,8 @@ import { routes } from '@/routes'
 
 export const ada = { user_id: '1', email: 'ada@example.com', name: 'Ada', username: 'ada', roles: ['admin'], groups: [], is_admin: true }
 
+export const bob = { ...ada, user_id: '2', email: 'bob@example.com', name: 'Bob', username: 'bob', roles: [], is_admin: false }
+
 /**
  * Answers `/api/auth/me` (logged in with `user`, or 401 when null) and every other call with `others`, which gets
  * the url and the options and returns the body, or a `{ status }` to answer with that status.
