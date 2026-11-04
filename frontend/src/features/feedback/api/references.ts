@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api } from './client'
+import { api } from '@/lib/api'
 import { toStatus, toType } from './mappers'
 import { keys } from './keys'
 import type { FeedbackStatus, FeedbackType, ReferenceInput } from '../types'

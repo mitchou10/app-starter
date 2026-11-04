@@ -1,7 +1,7 @@
 import { type InfiniteData, useInfiniteQuery, useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { THREAD_PAGE_SIZE } from '../pagination'
-import { api } from './client'
+import { api } from '@/lib/api'
 import { keys } from './keys'
 import { toMessagesPage } from './mappers'
 import type { FeedbackMessage } from '../types'

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import type { FeedbackStatus, FeedbackType, ReferenceInput, Tone } from '../types'
-import { ErrorNotice } from './ErrorNotice'
+import { ErrorNotice } from '@/components/ErrorNotice'
 import { OptionSelect } from './OptionSelect'
 import { TONES } from './tone'
 

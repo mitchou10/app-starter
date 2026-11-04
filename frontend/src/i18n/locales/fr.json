@@ -191,23 +191,23 @@
     },
     "state": {
       "loading": "Chargement..."
-    },
-    "errors": {
-      "tooLarge": "Une image est trop volumineuse (5 Mo au maximum).",
-      "unsupported": "Seulement des images PNG, JPEG ou WebP.",
-      "tooMany": "5 captures au maximum.",
-      "forbidden": "Vous n'avez pas le droit de faire cela.",
-      "notFound": "Cela n'existe plus.",
-      "duplicate": "Une valeur porte déjà ce nom.",
-      "invalid": "Il manque quelque chose ou ce n'est pas valide. Vérifiez votre saisie.",
-      "network": "Le serveur est injoignable. Réessayez.",
-      "failed": "Une erreur est survenue. Réessayez.",
-      "conflict": "Impossible : l'application elle-même s'en sert."
     }
   },
   "forbidden": {
     "title": "Accès refusé",
     "description": "Cette page est réservée aux administrateurs.",
     "back": "Retour à l'application"
+  },
+  "errors": {
+    "tooLarge": "Une image est trop volumineuse (5 Mo au maximum).",
+    "unsupported": "Seulement des images PNG, JPEG ou WebP.",
+    "tooMany": "5 captures au maximum.",
+    "forbidden": "Vous n'avez pas le droit de faire cela.",
+    "notFound": "Cela n'existe plus.",
+    "duplicate": "Une valeur porte déjà ce nom.",
+    "invalid": "Il manque quelque chose ou ce n'est pas valide. Vérifiez votre saisie.",
+    "network": "Le serveur est injoignable. Réessayez.",
+    "failed": "Une erreur est survenue. Réessayez.",
+    "conflict": "Impossible : l'application elle-même s'en sert."
   }
 }

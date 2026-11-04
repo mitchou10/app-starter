@@ -1,4 +1,4 @@
-import { ApiError } from './client'
+import { ApiError } from './api'
 
 export type ErrorKind =
   | 'tooLarge'
