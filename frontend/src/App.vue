@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
+import { useCurrentUser } from './composables/useCurrentUser'
 
-const status = ref('...')
+const { user, loaded, load, login, logout } = useCurrentUser()
 
-onMounted(async () => {
-  try {
-    const response = await fetch('/api/health')
-    status.value = ((await response.json()) as { status: string }).status
-  } catch {
-    status.value = 'unreachable'
-  }
-})
+onMounted(load)
 </script>
 
 <template>
   <main>
     <h1>App</h1>
-    <p>Backend: {{ status }}</p>
+    <p v-if="!loaded">...</p>
+    <template v-else-if="user">
+      <p>Signed in as {{ user.name || user.username || user.email }}</p>
+      <button @click="logout">Sign out</button>
+    </template>
+    <button v-else @click="login()">Sign in</button>
   </main>
 </template>
