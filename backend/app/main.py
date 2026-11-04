@@ -3,6 +3,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth.router import router as auth_router
 from app.config import settings
+from app.routers import health
 
 app = FastAPI(title=settings.APP_NAME, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -18,8 +19,4 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-
-
-@app.get("/api/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+app.include_router(health.router)

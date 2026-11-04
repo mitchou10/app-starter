@@ -1,11 +1,10 @@
-from dataclasses import asdict
-
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import JSONResponse, RedirectResponse, Response
+from fastapi.responses import RedirectResponse, Response
 
 from app.auth import deps, oidc
 from app.auth.session import new_session_id
 from app.config import settings
+from app.schemas import LogoutOut, UserOut
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -43,12 +42,12 @@ async def callback(request: Request) -> Response:
 
 
 @router.get("/me", summary="The logged-in user")
-async def me(user: deps.CurrentUser) -> dict:
-    return asdict(user) | {"access_token": None}
+async def me(user: deps.CurrentUser) -> UserOut:
+    return UserOut.model_validate(user)
 
 
 @router.post("/logout", summary="End the session; `logout_url` (when present) also ends the provider's")
-async def logout(request: Request) -> Response:
+async def logout(request: Request, response: Response) -> LogoutOut:
     sid = request.cookies.get(settings.SESSION_COOKIE_NAME)
     session = deps.store.get(sid) if sid else None
     url = None
@@ -59,6 +58,5 @@ async def logout(request: Request) -> Response:
             url = None
     if sid:
         deps.store.delete(sid)
-    response = JSONResponse({"logout_url": url})
     response.delete_cookie(settings.SESSION_COOKIE_NAME, path="/")
-    return response
+    return LogoutOut(logout_url=url)

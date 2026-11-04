@@ -77,7 +77,7 @@ def test_me_returns_the_user(fresh_store: MemorySessionStore) -> None:
     login(fresh_store)
     body = client.get("/api/auth/me").json()
     assert body["user_id"] == "1" and body["email"] == "ada@example.com" and body["username"] == "ada"
-    assert body["access_token"] is None
+    assert "access_token" not in body
 
 
 def test_expired_session_is_rejected(fresh_store: MemorySessionStore) -> None:

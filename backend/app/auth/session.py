@@ -2,12 +2,12 @@
 
 import secrets
 import time
-from dataclasses import dataclass
 from typing import Any, Protocol
 
+from pydantic import BaseModel
 
-@dataclass
-class Session:
+
+class Session(BaseModel):
     user: dict[str, Any]
     access_token: str
     expires_at: float  # access token expiry, epoch seconds
