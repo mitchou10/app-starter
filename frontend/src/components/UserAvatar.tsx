@@ -1,8 +1,10 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import type { CurrentUser } from '@/auth/AuthProvider'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-/** The person's initials (a photo can be added with <AvatarImage> when the provider gives one). */
-export function initials(user: Pick<CurrentUser, 'name' | 'username' | 'email'>) {
+type Person = Pick<CurrentUser, 'name' | 'username' | 'email'>
+
+/** The person's initials, shown while there is no photo (or if it cannot be loaded). */
+export function initials(user: Person) {
   const source = user.name || user.username || user.email
   const words = source.split(/[\s@._-]+/).filter(Boolean)
   return words
@@ -12,9 +14,17 @@ export function initials(user: Pick<CurrentUser, 'name' | 'username' | 'email'>)
     .toUpperCase()
 }
 
-export function UserAvatar({ user, className }: { user: Pick<CurrentUser, 'name' | 'username' | 'email'>; className?: string }) {
+interface UserAvatarProps {
+  user: Person
+  /** Version of the photo (see AuthProvider): without one, only the initials are shown. */
+  version?: number | null
+  className?: string
+}
+
+export function UserAvatar({ user, version, className }: UserAvatarProps) {
   return (
     <Avatar className={className}>
+      {version != null && <AvatarImage src={`/api/me/avatar?v=${version}`} alt="" />}
       <AvatarFallback>{initials(user)}</AvatarFallback>
     </Avatar>
   )
