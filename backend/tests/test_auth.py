@@ -14,6 +14,7 @@ def fresh_store(monkeypatch: pytest.MonkeyPatch) -> MemorySessionStore:
     store = MemorySessionStore()
     monkeypatch.setattr(deps, "store", store)
     monkeypatch.setattr(settings, "SESSION_COOKIE_SECURE", False)  # the test client speaks plain HTTP
+    client.cookies.clear()  # the client is shared: no cookie may leak from a previous test
     return store
 
 
