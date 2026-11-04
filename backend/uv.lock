@@ -274,6 +274,8 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "eralchemy" },
+    { name = "graphviz" },
     { name = "moto", extra = ["s3", "server"] },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -299,6 +301,8 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "eralchemy", specifier = ">=1.7.0" },
+    { name = "graphviz", specifier = ">=0.21" },
     { name = "moto", extras = ["s3", "server"], specifier = ">=5.2.5" },
     { name = "pytest", specifier = ">=9.2.0" },
     { name = "pytest-asyncio", specifier = ">=1.4.1.post1" },
@@ -838,6 +842,18 @@ wheels = [
 ]
 
 [[package]]
+name = "eralchemy"
+version = "1.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sqlalchemy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1b/cc/d41f21c662b244efedabac91705834c59dcf43b09e74dbc2b5ff32ea8b1c/eralchemy-1.7.0.tar.gz", hash = "sha256:926376fdab2e1ca8eec05698c457d17718ed1458fa574b67e815c43ae52b377a", size = 28591, upload-time = "2026-05-05T14:04:15.218Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/49/bd/6208c7735392ffb0179f8d9a4a07fb5ef893b4e1d9642605cbe7d0079a79/eralchemy-1.7.0-py3-none-any.whl", hash = "sha256:d53034cacb413c383ab214d242c7b111004095c2dcbdeb9d7d5e4c7c8a6c4000", size = 22095, upload-time = "2026-05-05T14:04:13.921Z" },
+]
+
+[[package]]
 name = "fastapi"
 version = "0.162.0"
 source = { registry = "https://pypi.org/simple" }
@@ -964,6 +980,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a4/91/223fbace7c8648690d7fb77855e29bd248c9ed1e0833ed3002ab29bc1441/graphql_core-3.3.1.tar.gz", hash = "sha256:8d9b6f95fb66b58b260904cf9e191f422782620533ec8fa0c96ab941b6659a2a", size = 751402, upload-time = "2026-10-25T09:34:09.764Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/57/0e/e51b006267e7fa785abf5d1f86a7d60b84f7f893e3ba4fe23df9be2000cf/graphql_core-3.3.1-py3-none-any.whl", hash = "sha256:43ebcd0d9a0662a71b1a2f6562ba863d253057ec11cbc45835b2e2683a0a3770", size = 349047, upload-time = "2026-10-25T09:34:07.725Z" },
+]
+
+[[package]]
+name = "graphviz"
+version = "0.21"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/b3/3ac91e9be6b761a4b30d66ff165e54439dcd48b83f4e20d644867215f6ca/graphviz-0.21.tar.gz", hash = "sha256:20743e7183be82aaaa8ad6c93f8893c923bd6658a04c32ee115edb3c8a835f78", size = 200434, upload-time = "2025-06-15T09:35:05.824Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/91/4c/e0ce1ef95d4000ebc1c11801f9b944fa5910ecc15b5e351865763d8657f8/graphviz-0.21-py3-none-any.whl", hash = "sha256:54f33de9f4f911d7e84e4191749cac8cc5653f815b06738c54db9a15ab8b1e42", size = 47300, upload-time = "2025-06-15T09:35:04.433Z" },
 ]
 
 [[package]]

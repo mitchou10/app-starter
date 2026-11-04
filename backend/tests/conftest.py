@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 # The database the tests run against (docker compose -f docker-compose.test.yaml up -d --wait). Set before the app
@@ -18,11 +19,31 @@ from app.db import get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.storage import StoredObject, get_store  # noqa: E402
 
+SEEDED = ("feedback_types", "feedback_statuses")
+RESET = "TRUNCATE feedback_attachments, feedback_messages, feedbacks, feedback_types, feedback_statuses, user_profiles"
+
+
+async def _sql(*statements: str) -> None:
+    engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
+    async with engine.begin() as connection:
+        for statement in statements:
+            await connection.execute(text(statement))
+    await engine.dispose()
+
 
 @pytest.fixture(scope="session")
-def migrated_database() -> None:
-    """The schema comes from the migrations, so they are tested too."""
-    command.upgrade(Config("alembic.ini"), "head")
+def migrated_database() -> Iterator[None]:
+    """The schema comes from the migrations, so they are tested too: from scratch, with the default types and statuses.
+
+    A copy of those defaults is kept (`_seed_*`), so each test can start from them without repeating them here."""
+    config = Config("alembic.ini")
+    asyncio.run(_sql(*(f"DROP TABLE IF EXISTS _seed_{table}" for table in SEEDED)))
+    command.downgrade(config, "base")
+    command.upgrade(config, "head")
+    asyncio.run(_sql(*(f"CREATE TABLE _seed_{table} AS TABLE {table}" for table in SEEDED)))
+    yield
+    # `alembic check` must not find tables the models do not know.
+    asyncio.run(_sql(*(f"DROP TABLE IF EXISTS _seed_{table}" for table in SEEDED)))
 
 
 @pytest.fixture
@@ -30,7 +51,9 @@ async def db(migrated_database: None) -> AsyncIterator[AsyncSession]:
     # NullPool: a connection belongs to the event loop of the test that opened it.
     engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
     async with engine.begin() as connection:
-        await connection.execute(text("TRUNCATE user_profiles"))
+        await connection.execute(text(RESET))
+        for table in SEEDED:
+            await connection.execute(text(f"INSERT INTO {table} SELECT * FROM _seed_{table}"))
     async with async_sessionmaker(engine, expire_on_commit=False)() as session:
         app.dependency_overrides[get_db] = lambda: session
         yield session
