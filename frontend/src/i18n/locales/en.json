@@ -57,13 +57,18 @@
   },
   "appNav": {
     "home": "Home",
-    "toggle": "Toggle the sidebar"
+    "toggle": "Toggle the sidebar",
+    "adminFeedback": "All feedback",
+    "adminFeedbackSettings": "Feedback settings"
   },
   "userMenu": {
     "open": "Open the user menu",
     "settings": "Settings",
     "language": "Language",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "giveFeedback": "Give feedback",
+    "myFeedback": "My feedback",
+    "admin": "Administration"
   },
   "appHome": {
     "welcome": "Welcome, {{name}}",
@@ -84,5 +89,105 @@
       "unsupported": "This file is not a PNG, JPEG or WebP image.",
       "failed": "The photo could not be saved. Try again."
     }
+  },
+  "feedback": {
+    "screenshots": {
+      "add": "Add screenshots",
+      "hint": "PNG, JPEG or WebP, 5 MB each, {{max}} at most. You can also paste an image.",
+      "remove": "Remove {{name}}",
+      "open": "Open {{name}}",
+      "errors": {
+        "tooMany": "{{max}} screenshots at most.",
+        "tooLarge": "A screenshot is too large (5 MB at most).",
+        "unsupported": "Only PNG, JPEG or WebP images."
+      }
+    },
+    "form": {
+      "title": "Title",
+      "type": "Type",
+      "typePlaceholder": "Choose a type",
+      "description": "Description",
+      "screenshots": "Screenshots (optional)",
+      "required": "This field is required.",
+      "cancel": "Cancel",
+      "submit": "Send"
+    },
+    "dialog": {
+      "title": "Give feedback",
+      "description": "A bug, an idea, a question: tell us. We answer in My feedback."
+    },
+    "filters": {
+      "status": "Status",
+      "type": "Type",
+      "allStatuses": "All statuses",
+      "open": "Open",
+      "allTypes": "All types"
+    },
+    "list": {
+      "title": "Title",
+      "type": "Type",
+      "status": "Status",
+      "author": "Author",
+      "updated": "Updated",
+      "replies": "Answers",
+      "empty": "No feedback here.",
+      "myTitle": "My feedback",
+      "myDescription": "What you sent us and where it stands.",
+      "new": "New feedback"
+    },
+    "thread": {
+      "statusChanged": "{{name}} changed the status",
+      "staff": "Team"
+    },
+    "reply": {
+      "label": "Your answer",
+      "send": "Send answer"
+    },
+    "controls": {
+      "status": "Status",
+      "type": "Type",
+      "close": "Close this feedback",
+      "reopen": "Reopen this feedback"
+    },
+    "detail": {
+      "notFound": "This feedback does not exist.",
+      "back": "Back to the list",
+      "by": "by {{name}} on {{date}}"
+    },
+    "tones": {
+      "gray": "Gray",
+      "blue": "Blue",
+      "green": "Green",
+      "amber": "Amber",
+      "red": "Red",
+      "violet": "Violet"
+    },
+    "admin": {
+      "listTitle": "All feedback",
+      "listDescription": "Everything users sent. Open one to answer or change its status.",
+      "settingsTitle": "Feedback settings",
+      "settingsDescription": "The types and statuses people can choose from. Archive a value rather than deleting it: existing feedback keeps it.",
+      "types": "Types",
+      "statuses": "Statuses",
+      "add": "Add",
+      "edit": "Edit",
+      "name": "Name",
+      "description": "Description",
+      "color": "Color",
+      "isClosed": "A closed status: the feedback is done with",
+      "save": "Save",
+      "createdBy": "Created by",
+      "createdAt": "Created on",
+      "actions": "Actions",
+      "closedFlag": "closed",
+      "system": "System",
+      "archive": "Archive",
+      "restore": "Restore"
+    }
+  },
+  "forbidden": {
+    "title": "Access denied",
+    "description": "This page is for administrators.",
+    "back": "Back to the app"
   }
 }

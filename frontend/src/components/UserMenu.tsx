@@ -1,8 +1,11 @@
-import { ChevronsUpDown, Languages, LogOut, Settings } from 'lucide-react'
+import { ChevronsUpDown, Languages, ListChecks, LogOut, MessageSquarePlus, Settings } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { useCurrentUser } from '@/auth/AuthProvider'
 import { UserAvatar } from '@/components/UserAvatar'
+import { ADMIN_NAV } from '@/layouts/appNav'
+import { FeedbackDialog } from '@/features/feedback/components/FeedbackDialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +28,7 @@ export function UserMenu() {
   const { t } = useTranslation()
   const { user, avatarVersion, logout } = useCurrentUser()
   const { current, languages, change } = useLanguage()
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   if (!user) return null
 
   const name = user.name || user.username || user.email
@@ -54,6 +58,16 @@ export function UserMenu() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
+            <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
+              <MessageSquarePlus aria-hidden />
+              {t('userMenu.giveFeedback')}
+            </DropdownMenuItem>
+            <DropdownMenuItem render={<Link to="/feedback" />}>
+              <ListChecks aria-hidden />
+              {t('userMenu.myFeedback')}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem render={<Link to="/settings" />}>
               <Settings aria-hidden />
               {t('userMenu.settings')}
@@ -75,6 +89,21 @@ export function UserMenu() {
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
+            {user.is_admin && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{t('userMenu.admin')}</DropdownMenuLabel>
+                  {ADMIN_NAV.map(({ key, to, icon: Icon }) => (
+                    <DropdownMenuItem key={key} render={<Link to={to} />}>
+                      <Icon aria-hidden />
+                      {t(`appNav.${key}`)}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </>
+            )}
+
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void logout()}>
               <LogOut aria-hidden />
@@ -83,6 +112,8 @@ export function UserMenu() {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      {/* Outside the menu: the menu unmounts its content when it closes, and the dialog must stay. */}
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </SidebarMenu>
   )
 }

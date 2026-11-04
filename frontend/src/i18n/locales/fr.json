@@ -57,13 +57,18 @@
   },
   "appNav": {
     "home": "Accueil",
-    "toggle": "Afficher ou masquer la barre latérale"
+    "toggle": "Afficher ou masquer la barre latérale",
+    "adminFeedback": "Tous les retours",
+    "adminFeedbackSettings": "Réglages des retours"
   },
   "userMenu": {
     "open": "Ouvrir le menu utilisateur",
     "settings": "Paramètres",
     "language": "Langue",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "giveFeedback": "Donner mon avis",
+    "myFeedback": "Mes retours",
+    "admin": "Administration"
   },
   "appHome": {
     "welcome": "Bienvenue, {{name}}",
@@ -84,5 +89,105 @@
       "unsupported": "Ce fichier n'est pas une image PNG, JPEG ou WebP.",
       "failed": "La photo n'a pas pu être enregistrée. Réessayez."
     }
+  },
+  "feedback": {
+    "screenshots": {
+      "add": "Ajouter des captures",
+      "hint": "PNG, JPEG ou WebP, 5 Mo chacune, {{max}} au maximum. Vous pouvez aussi coller une image.",
+      "remove": "Retirer {{name}}",
+      "open": "Ouvrir {{name}}",
+      "errors": {
+        "tooMany": "{{max}} captures au maximum.",
+        "tooLarge": "Une capture est trop volumineuse (5 Mo au maximum).",
+        "unsupported": "Seulement des images PNG, JPEG ou WebP."
+      }
+    },
+    "form": {
+      "title": "Titre",
+      "type": "Type",
+      "typePlaceholder": "Choisir un type",
+      "description": "Description",
+      "screenshots": "Captures d'écran (facultatif)",
+      "required": "Ce champ est obligatoire.",
+      "cancel": "Annuler",
+      "submit": "Envoyer"
+    },
+    "dialog": {
+      "title": "Donner mon avis",
+      "description": "Un bug, une idée, une question : dites-le nous. Nous répondons dans Mes retours."
+    },
+    "filters": {
+      "status": "Statut",
+      "type": "Type",
+      "allStatuses": "Tous les statuts",
+      "open": "Ouverts",
+      "allTypes": "Tous les types"
+    },
+    "list": {
+      "title": "Titre",
+      "type": "Type",
+      "status": "Statut",
+      "author": "Auteur",
+      "updated": "Mis à jour",
+      "replies": "Réponses",
+      "empty": "Aucun retour ici.",
+      "myTitle": "Mes retours",
+      "myDescription": "Ce que vous nous avez envoyé et où cela en est.",
+      "new": "Nouveau retour"
+    },
+    "thread": {
+      "statusChanged": "{{name}} a changé le statut",
+      "staff": "Équipe"
+    },
+    "reply": {
+      "label": "Votre réponse",
+      "send": "Envoyer la réponse"
+    },
+    "controls": {
+      "status": "Statut",
+      "type": "Type",
+      "close": "Clore ce retour",
+      "reopen": "Rouvrir ce retour"
+    },
+    "detail": {
+      "notFound": "Ce retour n'existe pas.",
+      "back": "Retour à la liste",
+      "by": "par {{name}} le {{date}}"
+    },
+    "tones": {
+      "gray": "Gris",
+      "blue": "Bleu",
+      "green": "Vert",
+      "amber": "Ambre",
+      "red": "Rouge",
+      "violet": "Violet"
+    },
+    "admin": {
+      "listTitle": "Tous les retours",
+      "listDescription": "Tout ce que les utilisateurs ont envoyé. Ouvrez-en un pour répondre ou changer son statut.",
+      "settingsTitle": "Réglages des retours",
+      "settingsDescription": "Les types et les statuts proposés. Archivez une valeur plutôt que la supprimer : les retours existants la gardent.",
+      "types": "Types",
+      "statuses": "Statuts",
+      "add": "Ajouter",
+      "edit": "Modifier",
+      "name": "Nom",
+      "description": "Description",
+      "color": "Couleur",
+      "isClosed": "Un statut final : le retour est terminé",
+      "save": "Enregistrer",
+      "createdBy": "Créé par",
+      "createdAt": "Créé le",
+      "actions": "Actions",
+      "closedFlag": "final",
+      "system": "Système",
+      "archive": "Archiver",
+      "restore": "Restaurer"
+    }
+  },
+  "forbidden": {
+    "title": "Accès refusé",
+    "description": "Cette page est réservée aux administrateurs.",
+    "back": "Retour à l'application"
   }
 }

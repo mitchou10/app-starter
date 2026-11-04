@@ -1,5 +1,10 @@
 import type { RouteObject } from 'react-router'
+import { RequireAdmin } from '@/auth/RequireAdmin'
 import { RequireAuth } from '@/auth/RequireAuth'
+import { AdminFeedbackPage } from '@/features/feedback/pages/AdminFeedbackPage'
+import { AdminFeedbackSettingsPage } from '@/features/feedback/pages/AdminFeedbackSettingsPage'
+import { FeedbackDetailPage } from '@/features/feedback/pages/FeedbackDetailPage'
+import { MyFeedbackPage } from '@/features/feedback/pages/MyFeedbackPage'
 import { LandingPage } from '@/features/landing/LandingPage'
 import { AppLayout } from '@/layouts/AppLayout'
 import { RootLayout } from '@/layouts/RootLayout'
@@ -31,6 +36,15 @@ export const routes: RouteObject[] = [
         children: [
           { path: 'app', element: <AppHomePage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'feedback', element: <MyFeedbackPage /> },
+          { path: 'feedback/:id', element: <FeedbackDetailPage /> },
+          {
+            element: <RequireAdmin />,
+            children: [
+              { path: 'admin/feedback', element: <AdminFeedbackPage /> },
+              { path: 'admin/feedback/settings', element: <AdminFeedbackSettingsPage /> },
+            ],
+          },
         ],
       },
     ],
