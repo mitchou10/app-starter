@@ -66,6 +66,19 @@ credentials and, if the provider names them differently, `OIDC_ROLES_CLAIM` / `O
 - Sessions live in memory (`app/auth/session.py`): implement the `SessionStore` protocol on Redis or a database
   before running several replicas.
 
+### Login page theme
+
+The Keycloak login page is restyled like the frontend: `docker/keycloak/themes/app/login/` extends Keycloak's
+login theme with a small CSS. The colors, radius and font are the frontend's (`frontend/src/style.css`), copied by
+`node docker/keycloak/sync-theme.mjs`: run it after changing the frontend's theme. The realm uses it
+(`"loginTheme": "app"` in `realm-app.json`) and `docker-compose.yaml` mounts the folder, with Keycloak's theme cache
+off so that a CSS edit shows up on reload.
+
+The realm is only imported when it does not exist yet: on an already running Keycloak, recreate it
+(`docker compose down && docker compose up -d`) or pick the theme in the admin console
+(Realm settings → Themes → Login theme: `app`). Other providers have their own way to theme the login page: this
+folder is specific to Keycloak and can be dropped with it.
+
 ## Releases
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/). release-please opens **one** release

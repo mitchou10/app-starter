@@ -41,8 +41,13 @@ services:
       # the backend used, i.e. keycloak:8080.
       KC_HOSTNAME: http://localhost:8080
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      # Development: an edit of the login theme shows up on reload, without restarting Keycloak.
+      KC_SPI_THEME_CACHE_THEMES: "false"
+      KC_SPI_THEME_CACHE_TEMPLATES: "false"
+      KC_SPI_THEME_STATIC_MAX_AGE: "-1"
     volumes:
       - ./docker/keycloak/realm-app.json:/opt/keycloak/data/import/realm-app.json:ro
+      - ./docker/keycloak/themes/app:/opt/keycloak/themes/app:ro
     ports: ["8080:8080"]
     healthcheck:
       test:
