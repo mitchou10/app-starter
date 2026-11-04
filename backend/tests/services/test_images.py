@@ -1,7 +1,7 @@
 import pytest
 
-from app.services.avatar import detect_image_type, validate_avatar
-from app.services.errors import AvatarTooLarge, UnsupportedImage
+from app.services.errors import ImageTooLarge, UnsupportedImage
+from app.services.images import detect_image_type, validate_image
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 8
 
@@ -23,14 +23,14 @@ def test_the_type_comes_from_the_bytes(data: bytes, expected: str | None) -> Non
 
 
 def test_a_valid_photo_gives_its_type() -> None:
-    assert validate_avatar(PNG, max_bytes=100) == "image/png"
+    assert validate_image(PNG, max_bytes=100) == "image/png"
 
 
 def test_too_large() -> None:
-    with pytest.raises(AvatarTooLarge):
-        validate_avatar(PNG, max_bytes=len(PNG) - 1)
+    with pytest.raises(ImageTooLarge):
+        validate_image(PNG, max_bytes=len(PNG) - 1)
 
 
 def test_not_an_image() -> None:
     with pytest.raises(UnsupportedImage):
-        validate_avatar(b"hello", max_bytes=100)
+        validate_image(b"hello", max_bytes=100)

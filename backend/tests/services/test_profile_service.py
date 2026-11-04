@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.user_profile import UserProfileRepository
-from app.services.errors import AvatarNotFound, AvatarTooLarge, UnsupportedImage
+from app.services.errors import AvatarNotFound, ImageTooLarge, UnsupportedImage
 from app.services.profile import ProfileService
 from tests.conftest import MemoryStore
 
@@ -38,7 +38,7 @@ async def test_replacing_keeps_one_object(service: ProfileService, store: Memory
 async def test_nothing_is_stored_for_a_refused_photo(service: ProfileService, store: MemoryStore) -> None:
     with pytest.raises(UnsupportedImage):
         await service.set_avatar("u1", b"nope")
-    with pytest.raises(AvatarTooLarge):
+    with pytest.raises(ImageTooLarge):
         await service.set_avatar("u1", PNG + b"\x00" * 100)
     assert store.objects == {}
 

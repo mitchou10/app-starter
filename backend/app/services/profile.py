@@ -2,8 +2,8 @@ import uuid
 
 from app.models import UserProfile
 from app.repositories.user_profile import UserProfileRepository
-from app.services.avatar import validate_avatar
 from app.services.errors import AvatarNotFound
+from app.services.images import validate_image
 from app.storage import ObjectStore, StoredObject
 
 
@@ -29,8 +29,8 @@ class ProfileService:
         return StoredObject(data=stored.data, content_type=profile.avatar_content_type or stored.content_type)
 
     async def set_avatar(self, user_id: str, data: bytes) -> UserProfile:
-        """Raises AvatarTooLarge or UnsupportedImage when the photo is not acceptable."""
-        content_type = validate_avatar(data, self.max_avatar_bytes)
+        """Raises ImageTooLarge or UnsupportedImage when the photo is not acceptable."""
+        content_type = validate_image(data, self.max_avatar_bytes)
         previous = await self._profiles.get(user_id)
         previous_key = previous.avatar_key if previous else None
 
