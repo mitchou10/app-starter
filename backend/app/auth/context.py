@@ -1,22 +1,22 @@
-from dataclasses import dataclass, field
 from typing import Any
+
+from pydantic import BaseModel, Field
 
 from app.config import settings
 
 
-@dataclass
-class RequestContext:
+class RequestContext(BaseModel):
     """Who is asking. What the routes depend on: never the provider's raw claims."""
 
     user_id: str
     email: str = ""
     name: str = ""
     username: str = ""
-    roles: list[str] = field(default_factory=list)
-    groups: list[str] = field(default_factory=list)
+    roles: list[str] = Field(default_factory=list)
+    groups: list[str] = Field(default_factory=list)
     is_admin: bool = False
     # The user's own access token, for calling another service on their behalf: kept out of every repr and log.
-    access_token: str | None = field(default=None, repr=False)
+    access_token: str | None = Field(default=None, repr=False, exclude=True)
 
 
 def claim_path(claims: dict[str, Any], path: str) -> Any:
