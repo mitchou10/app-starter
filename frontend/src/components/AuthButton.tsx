@@ -1,24 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
-import { Button } from '@/components/ui/button'
 import { useCurrentUser } from '@/auth/AuthProvider'
+import { LinkButton } from '@/features/landing/LinkButton'
+import { Button } from '@/components/ui/button'
 
-/** Sign in when logged out, the user and sign out when logged in. */
+/** Public header: sign in when logged out, a way into the app once logged in (sign out is in the app's menu). */
 export function AuthButton() {
   const { t } = useTranslation()
-  const { user, loaded, login, logout } = useCurrentUser()
+  const { user, loaded, login } = useCurrentUser()
 
   if (!loaded) return null
-  if (!user) return <Button onClick={() => login()}>{t('auth.signIn')}</Button>
-
-  return (
-    <div className="flex items-center gap-3">
-      <Link to="/account" className="hidden text-sm hover:underline sm:inline">
-        {user.name || user.username || user.email}
-      </Link>
-      <Button variant="outline" onClick={() => void logout()}>
-        {t('auth.signOut')}
-      </Button>
-    </div>
-  )
+  if (!user) return <Button onClick={() => login('/app')}>{t('auth.signIn')}</Button>
+  return <LinkButton to="/app" size="default">{t('auth.openApp')}</LinkButton>
 }

@@ -1,21 +1,38 @@
 import type { RouteObject } from 'react-router'
 import { RequireAuth } from '@/auth/RequireAuth'
 import { LandingPage } from '@/features/landing/LandingPage'
+import { AppLayout } from '@/layouts/AppLayout'
 import { RootLayout } from '@/layouts/RootLayout'
-import { AccountPage } from '@/pages/AccountPage'
+import { AppHomePage } from '@/pages/AppHomePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 
 /**
- * Every page of the app. To add one: create it in src/pages (or src/features/<name>), add a line here, and a link
- * in src/layouts/nav.ts if it belongs in the header. Put it under <RequireAuth> if it needs a logged-in user.
+ * Two worlds:
+ *  - public pages (landing, 404) in RootLayout: header on top, footer at the bottom;
+ *  - the app, for logged-in users, in AppLayout: sidebar on the left with the profile menu.
+ *
+ * To add a page of the app: create it in src/pages (or src/features/<name>), add a line under AppLayout here and an
+ * entry in src/layouts/appNav.ts. To add a public page: add a line under RootLayout.
  */
 export const routes: RouteObject[] = [
   {
     element: <RootLayout />,
     children: [
       { index: true, element: <LandingPage /> },
-      { element: <RequireAuth />, children: [{ path: 'account', element: <AccountPage /> }] },
       { path: '*', element: <NotFoundPage /> },
+    ],
+  },
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          { path: 'app', element: <AppHomePage /> },
+          { path: 'settings', element: <SettingsPage /> },
+        ],
+      },
     ],
   },
 ]
