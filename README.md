@@ -158,6 +158,20 @@ Components stay small, take their texts as props and know nothing about i18n; on
 `UserMenu` and `AuthButton` call `t()`. To adapt the landing page in a new project: edit the texts in
 `src/i18n/locales/*.json`, the list in `content.ts`, and add or remove sections in `LandingPage.tsx`.
 
+### Feedback module (mockups)
+
+Users send feedback (title, description, type, screenshots) from their profile menu and follow it in **My feedback**;
+admins answer and move it forward. The screens are built in `src/features/feedback/` on an **in-memory mock**
+(`FeedbackProvider`, with sample data in `mock/data.ts`): nothing is saved, a reload starts again. Each function of the
+mock becomes a call to the backend later; the screens only use `useFeedback()`.
+
+- Profile menu: *Give feedback* (a dialog), *My feedback*, and for admins an *Administration* group (all feedback,
+  types and statuses). The sidebar stays light on purpose.
+- Types and statuses are data, not code: an admin adds, edits or archives them. An author can close or reopen their own
+  feedback; only admins change the status or the type.
+- To see it: `docker compose up` (the `dev` user of the Keycloak realm is an admin), or run the backend with
+  `AUTH_MODE=full-access` and `pnpm dev` with `BACKEND_URL` pointing to it.
+
 ## Authentication (BFF)
 
 The backend is a BFF: the browser never sees a token. `/api/auth/login` sends it to the identity provider
