@@ -1,0 +1,81 @@
+name: Release
+
+# One release PR for the whole repository. Merging it creates:
+#   - the global release         vX.Y.Z           (CHANGELOG.md)
+#   - one release per service    backend-vX.Y.Z   (backend/CHANGELOG.md)
+#                                frontend-vX.Y.Z  (frontend/CHANGELOG.md)
+# Only the services that changed since their last release are bumped.
+# `dev` produces release candidates (-rc.N), `main` stable releases.
+
+on:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+# Never run two releases on the same branch at once.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    uses: Mitchou10/github-workflow/.github/workflows/release-please.yml@v0
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    with:
+      ENABLE_PRERELEASE: true
+      TAG_MAJOR_AND_MINOR: false
+      RELEASE_CONFIG_FILE: .github/releases/release-please-config.json
+      RELEASE_MANIFEST_FILE: .github/releases/.release-please-manifest.json
+      PRERELEASE_CONFIG_FILE: .github/releases/release-please-config-rc.json
+      PRERELEASE_MANIFEST_FILE: .github/releases/.release-please-manifest-rc.json
+    # Without an App/PAT the release PR does not trigger CI. To fix it, add:
+    # secrets:
+    #   APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+    #   APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+
+  # Both images carry the global version (the workflow's outputs are the root package's).
+  build:
+    needs: release
+    if: needs.release.outputs.release-created == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, frontend]
+    uses: Mitchou10/github-workflow/.github/workflows/build-docker.yml@v0
+    permissions:
+      contents: read
+      packages: write
+    with:
+      IMAGE_NAME: ghcr.io/${{ github.repository }}-${{ matrix.service }}
+      CONTEXT: ${{ matrix.service }}
+      TARGET: runtime
+      IMAGE_TAG: ${{ needs.release.outputs.version }}
+      LATEST_TAG: ${{ github.ref_name == 'main' }}
+      TAG_MAJOR_AND_MINOR: ${{ github.ref_name == 'main' }}
+
+  scan-images:
+    needs: [release, build]
+    if: needs.release.outputs.release-created == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, frontend]
+    uses: Mitchou10/github-workflow/.github/workflows/scan-trivy.yml@v0
+    permissions:
+      contents: read
+      packages: read
+    with:
+      SCAN_TYPE: image
+      TARGET: ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ needs.release.outputs.version }}
+      CATEGORY: trivy-${{ matrix.service }}
+
+  # Must be the LAST job: keeps dev = main + unreleased work after a release.
+  sync-prerelease-branch:
+    needs: [release, build, scan-images]
+    if: ${{ !cancelled() && github.ref_name == 'main' && needs.release.outputs.release-created == 'true' }}
+    uses: Mitchou10/github-workflow/.github/workflows/sync-prerelease-branch.yml@v0
+    permissions:
+      contents: write
