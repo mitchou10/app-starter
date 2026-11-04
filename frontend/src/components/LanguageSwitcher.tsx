@@ -1,25 +1,28 @@
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LANGUAGES } from '@/i18n'
 
 export function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   // `resolvedLanguage` is the supported one in use (fr-FR resolves to fr).
-  const current = i18n.resolvedLanguage
+  const items = LANGUAGES.map((language) => ({ value: language, label: t(`language.${language}`) }))
 
   return (
-    <div role="group" aria-label={t('language.label')} className="flex gap-1">
-      {LANGUAGES.map((language) => (
-        <Button
-          key={language}
-          size="sm"
-          variant={language === current ? 'default' : 'outline'}
-          aria-pressed={language === current}
-          onClick={() => void i18n.changeLanguage(language)}
-        >
-          {t(`language.${language}`)}
-        </Button>
-      ))}
-    </div>
+    <Select
+      value={i18n.resolvedLanguage}
+      items={items}
+      onValueChange={(language) => language && void i18n.changeLanguage(language)}
+    >
+      <SelectTrigger size="sm" aria-label={t('language.label')}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
