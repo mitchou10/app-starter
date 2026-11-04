@@ -68,6 +68,37 @@ RustFS in development, any S3-compatible service in production. The usual `AWS_*
 `AWS_ENDPOINT_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, plus `AWS_BUCKET` (the bucket is
 created on first use). RustFS console: http://localhost:9001 (`rustfsadmin` / `rustfsadmin`).
 
+### Feedback API
+
+Users send feedback and follow it; admins answer and move it forward. The data model is drawn in
+[docs/data-model.png](docs/data-model.png) (`uv run python scripts/draw_model.py`, needs Graphviz's `dot`, after a model
+change).
+
+| Who | Route |
+| --- | --- |
+| Everybody | `GET /api/feedback-types`, `GET /api/feedback-statuses` (archived ones included, flagged) |
+| | `POST /api/feedback` (multipart: `title`, `description`, `type_id`, `page`, `files`) |
+| | `GET /api/feedback` (mine), `GET /api/feedback/{id}`, `PATCH /api/feedback/{id}` (status, type) |
+| | `GET`, `POST /api/feedback/{id}/messages`, `GET /api/feedback/{id}/attachments/{id}` |
+| Admins | `GET /api/admin/feedback` (all of it) |
+| | `POST`, `PATCH /api/admin/feedback-types` and `/api/admin/feedback-statuses` |
+
+- **Visibility**: a feedback is seen by its author and by admins; for anybody else it does not exist (404).
+- **Changes**: admins change the status and the type freely. An author can only close their feedback (status
+  `closed`) or reopen it (`new`). Every change of status is written in the follow-up, between the answers.
+- **Types and statuses are data**: the migration ships the defaults, admins add, rename, recolor, reorder and archive
+  them (an archived value stays on its feedback but cannot be chosen again). The statuses with the keys `new` and
+  `closed` are used by the app itself: they can be renamed, never archived.
+- **Screenshots**: up to 5 per feedback or answer, PNG, JPEG or WebP of 5 MB at most, checked on their bytes, all
+  of them before any is stored. They are in the object storage and served by the API, to whoever may see the feedback.
+- **Pagination**: the list takes `limit` (1 to 50), `offset`, `status` (an id, or `open` for every status that is not
+  final) and `type_id`, and answers `{items, total, limit, offset}`. The follow-up is read from the newest message:
+  `limit` and `before` (the `next_before` of the previous page, an opaque cursor), and answers
+  `{items, total, next_before}` with the items oldest first. The cursor holds `(created_at, id)`: a message added
+  meanwhile moves nothing.
+- **Errors** are raised by the services (`services/errors.py`) and turned into status codes in one place,
+  `routers/errors.py`.
+
 ### Profile photo
 
 `GET /api/me/profile`, then `GET` / `PUT` / `DELETE /api/me/avatar`. PNG, JPEG or WebP, 2 MB at most
