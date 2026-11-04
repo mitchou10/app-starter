@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+    # `edited`: a renamed pull request title is linted again.
+    types: [opened, synchronize, reopened, edited]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-commits:
+    uses: Mitchou10/github-workflow/.github/workflows/lint-commits.yml@v0
+    permissions:
+      contents: read
+    with:
+      LINT_PR_TITLE: true # squash merges: the PR title becomes the commit
+
+  scan-secrets:
+    uses: Mitchou10/github-workflow/.github/workflows/scan-gitleaks.yml@v0
+    permissions:
+      contents: read
+
+  scan-fs:
+    uses: Mitchou10/github-workflow/.github/workflows/scan-trivy.yml@v0
+    permissions:
+      contents: read
+
+  paths:
+    uses: Mitchou10/github-workflow/.github/workflows/path-filter.yml@v0
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      FILTERS: |
+        backend:
+          - 'backend/**'
+        frontend:
+          - 'frontend/**'
+        ci:
+          - '.github/**'
+      ALWAYS: ci # a change to the workflows re-runs everything
+
+  # ---- backend (Python / uv) ----
+  backend-lint:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'backend')
+    uses: Mitchou10/github-workflow/.github/workflows/python-lint.yml@v0
+    permissions:
+      contents: read
+    with:
+      WORKING_DIRECTORY: backend
+
+  backend-typecheck:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'backend')
+    uses: Mitchou10/github-workflow/.github/workflows/python-typecheck.yml@v0
+    permissions:
+      contents: read
+    with:
+      WORKING_DIRECTORY: backend
+      TARGET: app
+
+  backend-deadcode:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'backend')
+    uses: Mitchou10/github-workflow/.github/workflows/python-deadcode.yml@v0
+    permissions:
+      contents: read
+    with:
+      WORKING_DIRECTORY: backend
+      PATHS: app
+
+  backend-tests:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'backend')
+    uses: Mitchou10/github-workflow/.github/workflows/python-coverage.yml@v0
+    permissions:
+      contents: read
+    with:
+      WORKING_DIRECTORY: backend
+      COVERAGE_SOURCE: app
+      MIN_COVERAGE: "80"
+
+  backend-image:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'backend')
+    uses: Mitchou10/github-workflow/.github/workflows/build-docker.yml@v0
+    permissions:
+      contents: read
+    with:
+      PUSH: false # only checks that the Dockerfile builds
+      CONTEXT: backend
+      TARGET: runtime
+
+  # ---- frontend (Vue / pnpm): no reusable workflow for it yet, so inline ----
+  frontend:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'frontend')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test:coverage
+      - run: pnpm build
+
+  frontend-image:
+    needs: paths
+    if: contains(fromJSON(needs.paths.outputs.changed), 'frontend')
+    uses: Mitchou10/github-workflow/.github/workflows/build-docker.yml@v0
+    permissions:
+      contents: read
+    with:
+      PUSH: false
+      CONTEXT: frontend
+      TARGET: runtime
+
+  # The only check to require in the branch protection: a skipped job counts as passed.
+  gate:
+    if: ${{ always() }}
+    needs:
+      - lint-commits
+      - scan-secrets
+      - scan-fs
+      - paths
+      - backend-lint
+      - backend-typecheck
+      - backend-deadcode
+      - backend-tests
+      - backend-image
+      - frontend
+      - frontend-image
+    uses: Mitchou10/github-workflow/.github/workflows/status-gate.yml@v0
+    with:
+      NEEDS: ${{ toJSON(needs) }}

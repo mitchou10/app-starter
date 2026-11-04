@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: backend
+      target: dev
+    ports: ["8000:8000"]
+    volumes: ["./backend/app:/app/app"]
+
+  frontend:
+    build:
+      context: frontend
+      target: dev
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports: ["5173:5173"]
+    volumes: ["./frontend/src:/app/src"]
+    depends_on: [backend]
