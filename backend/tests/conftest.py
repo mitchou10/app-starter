@@ -5,8 +5,9 @@ import os
 # is imported: its settings are read once.
 os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://app:app@localhost:55433/app")
 
-from collections.abc import AsyncIterator, Iterator  # noqa: E402
+from collections.abc import AsyncIterator, Callable, Iterator  # noqa: E402
 
+import httpx2  # noqa: E402
 import pytest  # noqa: E402
 from alembic import command  # noqa: E402
 from alembic.config import Config  # noqa: E402
@@ -14,6 +15,8 @@ from sqlalchemy import text  # noqa: E402
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine  # noqa: E402
 from sqlalchemy.pool import NullPool  # noqa: E402
 
+from app.auth.context import RequestContext  # noqa: E402
+from app.auth.deps import get_current_user  # noqa: E402
 from app.config import settings  # noqa: E402
 from app.db import get_db  # noqa: E402
 from app.main import app  # noqa: E402
@@ -89,3 +92,23 @@ def store() -> Iterator[MemoryStore]:
 def as_user(monkeypatch: pytest.MonkeyPatch) -> None:
     """Every request is the fixed dev user (AUTH_MODE=full-access): no identity provider needed."""
     monkeypatch.setattr(settings, "AUTH_MODE", "full-access")
+
+
+@pytest.fixture
+def login() -> Iterator[Callable[..., RequestContext]]:
+    """Choose who is logged in: `login("u1", "ada")`, or `login(admin=True)`. Call it again to switch user."""
+
+    def _login(user_id: str = "u1", username: str = "ada", admin: bool = False) -> RequestContext:
+        user = RequestContext(user_id=user_id, username=username, name=username, is_admin=admin)
+        app.dependency_overrides[get_current_user] = lambda: user
+        return user
+
+    yield _login
+    app.dependency_overrides.pop(get_current_user, None)
+
+
+@pytest.fixture
+async def client(db: AsyncSession, store: MemoryStore) -> AsyncIterator[httpx2.AsyncClient]:
+    """The app over HTTP, on the test database and the in-memory store. Nobody is logged in until `login` is called."""
+    async with httpx2.AsyncClient(transport=httpx2.ASGITransport(app=app), base_url="http://test") as client:
+        yield client

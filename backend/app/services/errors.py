@@ -43,6 +43,12 @@ class ReferenceNotFound(ServiceError):
     message = "This type or status does not exist"
 
 
+class InvalidReference(ServiceError):
+    """An id sent in a request that matches no type or status (as opposed to one named in the address)."""
+
+    message = "This type or status does not exist"
+
+
 class ReferenceArchived(ServiceError):
     message = "This type or status is archived and can no longer be chosen"
 
