@@ -18,6 +18,9 @@ STATUS_CODES: dict[type[errors.ServiceError], int] = {
     errors.InvalidReference: status.HTTP_422_UNPROCESSABLE_CONTENT,
     errors.ReferenceArchived: status.HTTP_422_UNPROCESSABLE_CONTENT,
     errors.TooManyAttachments: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    errors.InvalidCursor: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    errors.InvalidPage: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    errors.EmptyMessage: status.HTTP_422_UNPROCESSABLE_CONTENT,
 }
 
 

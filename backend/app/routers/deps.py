@@ -8,13 +8,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.deps import CurrentUser
 from app.config import settings
 from app.db import get_db
+from app.repositories.feedback import FeedbackRepository
+from app.repositories.feedback_attachments import FeedbackAttachmentRepository
+from app.repositories.feedback_messages import FeedbackMessageRepository
 from app.repositories.feedback_statuses import FeedbackStatusRepository
 from app.repositories.feedback_types import FeedbackTypeRepository
 from app.repositories.user_profile import UserProfileRepository
+from app.services.access import FeedbackAccess
 from app.services.actor import Actor
+from app.services.attachments import AttachmentService
+from app.services.feedback import FeedbackService
 from app.services.feedback_statuses import FeedbackStatusService
 from app.services.feedback_types import FeedbackTypeService
+from app.services.messages import MessageService
 from app.services.profile import ProfileService
+from app.services.workflow import FeedbackWorkflow
 from app.storage import ObjectStore, get_store
 
 
@@ -46,3 +54,49 @@ def get_status_service(db: Annotated[AsyncSession, Depends(get_db)]) -> Feedback
 
 TypeServiceDep = Annotated[FeedbackTypeService, Depends(get_type_service)]
 StatusServiceDep = Annotated[FeedbackStatusService, Depends(get_status_service)]
+
+
+DB = Annotated[AsyncSession, Depends(get_db)]
+Store = Annotated[ObjectStore, Depends(get_store)]
+
+
+def _attachments(db: AsyncSession, store: ObjectStore) -> AttachmentService:
+    return AttachmentService(
+        FeedbackAttachmentRepository(db),
+        store,
+        max_files=settings.FEEDBACK_MAX_ATTACHMENTS,
+        max_bytes=settings.FEEDBACK_ATTACHMENT_MAX_BYTES,
+    )
+
+
+def get_feedback_service(db: DB, store: Store) -> FeedbackService:
+    feedbacks = FeedbackRepository(db)
+    return FeedbackService(
+        feedbacks,
+        FeedbackAccess(feedbacks),
+        FeedbackTypeService(FeedbackTypeRepository(db)),
+        FeedbackStatusService(FeedbackStatusRepository(db)),
+        _attachments(db, store),
+    )
+
+
+def get_workflow(db: DB) -> FeedbackWorkflow:
+    feedbacks = FeedbackRepository(db)
+    return FeedbackWorkflow(
+        FeedbackAccess(feedbacks),
+        feedbacks,
+        FeedbackMessageRepository(db),
+        FeedbackTypeService(FeedbackTypeRepository(db)),
+        FeedbackStatusService(FeedbackStatusRepository(db)),
+    )
+
+
+def get_message_service(db: DB, store: Store) -> MessageService:
+    return MessageService(
+        FeedbackAccess(FeedbackRepository(db)), FeedbackMessageRepository(db), _attachments(db, store)
+    )
+
+
+FeedbackServiceDep = Annotated[FeedbackService, Depends(get_feedback_service)]
+WorkflowDep = Annotated[FeedbackWorkflow, Depends(get_workflow)]
+MessageServiceDep = Annotated[MessageService, Depends(get_message_service)]

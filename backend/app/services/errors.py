@@ -67,3 +67,17 @@ class NotAllowed(ServiceError):
 
 class TooManyAttachments(ServiceError):
     message = "Too many screenshots"
+
+
+class InvalidCursor(ServiceError):
+    message = "This page cursor is not valid"
+
+
+class InvalidPage(ServiceError):
+    """The page a feedback was sent from is not a path of the app."""
+
+    message = "The page must be a path of the app, starting with a single /"
+
+
+class EmptyMessage(ServiceError):
+    message = "The message is empty"

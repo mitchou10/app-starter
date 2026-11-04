@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     AWS_BUCKET: str = "app"
     AVATAR_MAX_BYTES: int = 2 * 1024 * 1024
 
+    # Feedback: the screenshots of a feedback or of an answer, and the biggest page a list can ask for.
+    FEEDBACK_MAX_ATTACHMENTS: int = 5
+    FEEDBACK_ATTACHMENT_MAX_BYTES: int = 5 * 1024 * 1024
+    PAGE_SIZE_MAX: int = 50
+
     # "oidc": real authentication. "full-access": no identity provider, a fixed dev identity for every request
     # (local development without Keycloak, unit tests).
     AUTH_MODE: Literal["oidc", "full-access"] = "oidc"
