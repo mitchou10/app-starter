@@ -6,6 +6,7 @@ import { vi } from 'vitest'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { routes } from '@/routes'
 import { createFakeFeedbackApi, Reply } from './fakeFeedbackApi'
+import { createFakeNotificationsApi, type SeedNotification } from './fakeNotificationsApi'
 
 export { Reply }
 
@@ -15,15 +16,18 @@ export const bob = { ...ada, user_id: '2', email: 'bob@example.com', name: 'Bob'
 
 /**
  * Answers `/api/auth/me` (logged in with `user`, or 401 when null) and every other call with `others`, which gets
- * the url and the options and returns the body, a `{ status }` or a `Reply`. Without `others`, the feedback API in
- * memory answers (see fakeFeedbackApi.ts), as `user`. Returns it, to look at what it holds.
+ * the url and the options and returns the body, a `{ status }` or a `Reply`. Without `others`, the feedback and the
+ * notifications APIs in memory answer (see fakeFeedbackApi.ts and fakeNotificationsApi.ts), as `user`; the
+ * notifications start with `options.notifications`. Returns what they hold.
  */
 export function stubBackend(
   user: typeof ada | null,
   others?: (url: string, init?: RequestInit) => unknown,
+  options: { notifications?: SeedNotification[] } = {},
 ) {
-  const fake = createFakeFeedbackApi(user && { user_id: user.user_id, username: user.username, name: user.name, is_admin: user.is_admin })
-  const answer = others ?? fake.handle
+  const feedback = createFakeFeedbackApi(user && { user_id: user.user_id, username: user.username, name: user.name, is_admin: user.is_admin })
+  const notifications = createFakeNotificationsApi(user !== null, options.notifications)
+  const answer = others ?? ((url: string, init?: RequestInit) => feedback.handle(url, init) ?? notifications.handle(url, init))
   vi.stubGlobal(
     'fetch',
     vi.fn(async (url: string, init?: RequestInit) => {
@@ -37,7 +41,7 @@ export function stubBackend(
       return { ok: true, status: 200, json: async () => body }
     }),
   )
-  return fake
+  return { ...feedback, notifications }
 }
 
 /** A client that does not retry or wait: a test sees the first answer. */

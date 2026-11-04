@@ -67,7 +67,12 @@
     "giveFeedback": "Donner mon avis",
     "myFeedback": "Gérer mes retours",
     "admin": "Administration",
-    "feedback": "Retours"
+    "feedback": "Retours",
+    "notifications": "Notifications",
+    "openUnread_one": "Ouvrir le menu utilisateur, 1 notification non lue",
+    "openUnread_other": "Ouvrir le menu utilisateur, {{count}} notifications non lues",
+    "unread_one": "1 notification non lue",
+    "unread_other": "{{count}} notifications non lues"
   },
   "appHome": {
     "welcome": "Bienvenue, {{name}}",
@@ -209,5 +214,26 @@
     "network": "Le serveur est injoignable. Réessayez.",
     "failed": "Une erreur est survenue. Réessayez.",
     "conflict": "Impossible : l'application elle-même s'en sert."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Ce que les applications vous disent.",
+    "tabs": {
+      "all": "Toutes",
+      "unread": "Non lues ({{count}})"
+    },
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lue",
+    "markUnread": "Marquer comme non lue",
+    "open": "Ouvrir",
+    "openOn": "Ouvrir sur {{host}}",
+    "unreadLabel": "Non lue :",
+    "empty": {
+      "all": "Vous n'avez aucune notification.",
+      "unread": "Aucune notification non lue."
+    },
+    "count": "{{shown}} sur {{total}}",
+    "more": "Afficher {{count}} de plus",
+    "loading": "Chargement..."
   }
 }
