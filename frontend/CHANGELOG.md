@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/mitchou10/app-starter/compare/frontend-v0.3.0...frontend-v0.4.0) (2026-11-04)
+
+
+### Features
+
+* **frontend:** add the notifications page and the badge on the avatar ([d4177ad](https://github.com/mitchou10/app-starter/commit/d4177ad0ef7450c28b93ca9413c7e2ef19946120))
+
+
+### Code Refactoring
+
+* **frontend:** share the API client and the error messages ([0df72b1](https://github.com/mitchou10/app-starter/commit/0df72b1239bf106130c6d9d46967bb3179d6d83b))
+
 ## [0.3.0](https://github.com/mitchou10/app-starter/compare/frontend-v0.2.0...frontend-v0.3.0) (2026-11-04)
 
 
