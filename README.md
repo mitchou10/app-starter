@@ -41,28 +41,37 @@ React 19 + TypeScript on Vite, styled with [Tailwind CSS](https://tailwindcss.co
   `src/i18n/index.ts`.
 - `/api` is proxied to the backend (`BACKEND_URL`), so the session cookie stays on the page's own origin.
 
-### Structure, routing and landing page
+### Structure, routing and layouts
 
 ```
 src/routes.tsx         every route of the app, in one place
-src/layouts/           RootLayout (header + footer shared by all pages), nav.ts (header links), ScrollToHash
-src/pages/             one file per page (NotFoundPage, AccountPage)
+src/layouts/           RootLayout (public header + footer), AppLayout (sidebar), appNav.ts (sidebar entries)
+src/pages/             one file per page (AppHomePage, SettingsPage, NotFoundPage)
 src/auth/              AuthProvider (who is logged in, asked once), RequireAuth (protects routes)
-src/components/        generic and reusable: Container, Section, SectionHeading, LanguageSwitcher, AuthButton
+src/components/        generic and reusable: Container, Section, SectionHeading, UserMenu, LanguageSwitcher...
 src/components/ui/     shadcn/ui (generated, edit freely)
 src/features/landing/  the home page: one small component per file, everything comes from props
   content.ts           the list of features (icon + key)
   LandingPage.tsx      only assembles the sections
 ```
 
-[React Router](https://reactrouter.com) 8. **Add a page**: create it in `src/pages` (or `src/features/<name>`), add a line
-in `routes.tsx`, and a link in `layouts/nav.ts` if it belongs in the header. Put it under `<RequireAuth>` (as `account`
-is) when it needs a logged-in user: a visitor gets a sign-in button that brings them back to the page. Unknown
-addresses show the 404 page; nginx falls back to `index.html` so a refresh on any route works.
+Two worlds, like ChatGPT's site and app:
 
-Components stay small, take their texts as props and know nothing about i18n; only the pages, the layout and
-`AuthButton` call `t()`. To adapt the landing page in a new project: edit the texts in `src/i18n/locales/*.json`, the
-list in `content.ts`, and add or remove sections in `LandingPage.tsx`.
+- **Public** (`RootLayout`): the landing page and the 404, with a header on top and a footer. The header holds
+  the language dropdown and a "Sign in" button (or "Open the app" once logged in).
+- **App** (`AppLayout`, behind `RequireAuth`): for logged-in users only. A sidebar on the left (a drawer on mobile)
+  with the navigation, and the **profile at the bottom**: click it for a menu with the settings, the language and
+  sign out. A visitor who is not logged in gets a sign-in button that brings them back to the page they asked for.
+  There is no content yet: `/app` is empty on purpose, it is where your product starts.
+
+[React Router](https://reactrouter.com). **Add a page of the app**: create it in `src/pages` (or `src/features/<name>`),
+add a line under `AppLayout` in `routes.tsx` and an entry in `layouts/appNav.ts` for the sidebar. **Add a public
+page**: a line under `RootLayout` (and a link in `layouts/nav.ts` if it belongs in the header, which has none for
+now). Unknown addresses show the 404 page; nginx falls back to `index.html` so a refresh on any route works.
+
+Components stay small, take their texts as props and know nothing about i18n; only the pages, the layouts,
+`UserMenu` and `AuthButton` call `t()`. To adapt the landing page in a new project: edit the texts in
+`src/i18n/locales/*.json`, the list in `content.ts`, and add or remove sections in `LandingPage.tsx`.
 
 ## Authentication (BFF)
 
