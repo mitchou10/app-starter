@@ -5,7 +5,7 @@ import { useChangeFeedback } from '../api/detail'
 import { useReferences } from '../api/references'
 import { byId, offered } from '../format'
 import type { Feedback } from '../types'
-import { ErrorNotice } from './ErrorNotice'
+import { ErrorNotice } from '@/components/ErrorNotice'
 import { OptionSelect } from './OptionSelect'
 
 /**

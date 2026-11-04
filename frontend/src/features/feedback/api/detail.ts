@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api } from './client'
+import { api } from '@/lib/api'
 import { keys } from './keys'
 import { toFeedback } from './mappers'
 import { refreshNewest } from './thread'

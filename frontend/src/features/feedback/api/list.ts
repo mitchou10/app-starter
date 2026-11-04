@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import type { Filters } from '../components/FeedbackFilters'
 import { LIST_PAGE_SIZE } from '../pagination'
-import { api } from './client'
+import { api } from '@/lib/api'
 import { keys } from './keys'
 import { toSummary } from './mappers'
 import type { FeedbackSummary } from '../types'

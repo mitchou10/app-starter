@@ -191,23 +191,23 @@
     },
     "state": {
       "loading": "Loading..."
-    },
-    "errors": {
-      "tooLarge": "An image is too large (5 MB at most).",
-      "unsupported": "Only PNG, JPEG or WebP images.",
-      "tooMany": "5 screenshots at most.",
-      "forbidden": "You are not allowed to do this.",
-      "notFound": "This does not exist any more.",
-      "duplicate": "A value with this name already exists.",
-      "invalid": "Something is missing or not valid. Check what you typed.",
-      "network": "The server cannot be reached. Try again.",
-      "failed": "Something went wrong. Try again.",
-      "conflict": "This cannot be done: the app itself relies on it."
     }
   },
   "forbidden": {
     "title": "Access denied",
     "description": "This page is for administrators.",
     "back": "Back to the app"
+  },
+  "errors": {
+    "tooLarge": "An image is too large (5 MB at most).",
+    "unsupported": "Only PNG, JPEG or WebP images.",
+    "tooMany": "5 screenshots at most.",
+    "forbidden": "You are not allowed to do this.",
+    "notFound": "This does not exist any more.",
+    "duplicate": "A value with this name already exists.",
+    "invalid": "Something is missing or not valid. Check what you typed.",
+    "network": "The server cannot be reached. Try again.",
+    "failed": "Something went wrong. Try again.",
+    "conflict": "This cannot be done: the app itself relies on it."
   }
 }
