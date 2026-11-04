@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/mitchou10/app-starter/compare/v0.4.0...v0.5.0) (2026-11-04)
+
+
+### Features
+
+* **backend:** add the notifications table ([d9ab94a](https://github.com/mitchou10/app-starter/commit/d9ab94ab0e09bcbf3c9ffb1dfb57cf86a2149245))
+* **backend:** let applications emit notifications and users read them ([66a3221](https://github.com/mitchou10/app-starter/commit/66a3221ba447c6fefeab8a79351a25d0e07db4fe))
+* **frontend:** add the notifications page and the badge on the avatar ([d4177ad](https://github.com/mitchou10/app-starter/commit/d4177ad0ef7450c28b93ca9413c7e2ef19946120))
+
+
+### Code Refactoring
+
+* **frontend:** share the API client and the error messages ([0df72b1](https://github.com/mitchou10/app-starter/commit/0df72b1239bf106130c6d9d46967bb3179d6d83b))
+
 ## [0.4.0](https://github.com/mitchou10/app-starter/compare/v0.3.0...v0.4.0) (2026-11-04)
 
 
