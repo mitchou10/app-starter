@@ -58,8 +58,7 @@
   "appNav": {
     "home": "Home",
     "toggle": "Toggle the sidebar",
-    "adminFeedback": "All feedback",
-    "adminFeedbackSettings": "Feedback settings"
+    "adminFeedback": "Manage feedback"
   },
   "userMenu": {
     "open": "Open the user menu",
@@ -117,8 +116,8 @@
       "description": "A bug, an idea, a question: tell us. We answer in My feedback."
     },
     "filters": {
-      "status": "Status",
-      "type": "Type",
+      "status": "Filter by status",
+      "type": "Filter by type",
       "allStatuses": "All statuses",
       "open": "Open",
       "allTypes": "All types"
@@ -133,7 +132,8 @@
       "empty": "No feedback here.",
       "myTitle": "My feedback",
       "myDescription": "What you sent us and where it stands.",
-      "new": "New feedback"
+      "new": "New feedback",
+      "label": "Feedback list"
     },
     "thread": {
       "statusChanged": "{{name}} changed the status",
@@ -152,7 +152,9 @@
     "detail": {
       "notFound": "This feedback does not exist.",
       "back": "Back to the list",
-      "by": "by {{name}} on {{date}}"
+      "by": "by {{name}} on {{date}}",
+      "label": "Selected feedback",
+      "select": "Select a feedback to read it and follow up."
     },
     "tones": {
       "gray": "Gray",
@@ -163,9 +165,6 @@
       "violet": "Violet"
     },
     "admin": {
-      "listTitle": "All feedback",
-      "listDescription": "Everything users sent. Open one to answer or change its status.",
-      "settingsTitle": "Feedback settings",
       "settingsDescription": "The types and statuses people can choose from. Archive a value rather than deleting it: existing feedback keeps it.",
       "types": "Types",
       "statuses": "Statuses",
@@ -182,7 +181,11 @@
       "closedFlag": "closed",
       "system": "System",
       "archive": "Archive",
-      "restore": "Restore"
+      "restore": "Restore",
+      "pageTitle": "Manage feedback",
+      "pageDescription": "Everything users sent: answer, change the status or the type. The types and statuses are in the second tab.",
+      "tabFeedback": "Feedback",
+      "tabSettings": "Types and statuses"
     }
   },
   "forbidden": {

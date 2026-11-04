@@ -1,23 +1,20 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Section } from '@/components/Section'
+import { Container } from '@/components/Container'
 import { Button } from '@/components/ui/button'
 import { FeedbackDialog } from '../components/FeedbackDialog'
-import { FeedbackFilters, NO_FILTER } from '../components/FeedbackFilters'
-import { FeedbackTable } from '../components/FeedbackTable'
-import { applyFilters } from '../filters'
+import { FeedbackWorkspace } from '../components/FeedbackWorkspace'
 import { useFeedback } from '../FeedbackProvider'
 
-/** "My feedback": what the user sent, and where it stands. */
+/** "My feedback": what the user sent, with the follow-up of the selected one next to it. */
 export function MyFeedbackPage() {
   const { t } = useTranslation()
-  const { mine, statuses } = useFeedback()
-  const [filters, setFilters] = useState(NO_FILTER)
+  const { mine } = useFeedback()
   const [dialog, setDialog] = useState(false)
 
   return (
-    <Section className="py-8 sm:py-8">
+    <Container className="max-w-7xl py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">{t('feedback.list.myTitle')}</h1>
@@ -28,11 +25,8 @@ export function MyFeedbackPage() {
           {t('feedback.list.new')}
         </Button>
       </div>
-      <div className="mb-4">
-        <FeedbackFilters value={filters} onChange={setFilters} />
-      </div>
-      <FeedbackTable feedbacks={applyFilters(mine, filters, statuses)} />
+      <FeedbackWorkspace feedbacks={mine} basePath="/feedback" />
       <FeedbackDialog open={dialog} onOpenChange={setDialog} />
-    </Section>
+    </Container>
   )
 }

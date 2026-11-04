@@ -21,25 +21,26 @@ async function pick(label: string, option: string) {
 it('lists only my feedback, with its type, its status and its number of answers', async () => {
   await open('/feedback')
   expect(screen.getByRole('heading', { name: 'My feedback' })).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: 'Dark mode' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /Dark mode/ })).toBeInTheDocument()
   expect(screen.queryByText('Export my data as CSV')).not.toBeInTheDocument() // somebody else's
-  const row = screen.getByRole('link', { name: /save button/ }).closest('tr')!
-  expect(within(row).getAllByText('Bug').length).toBeGreaterThan(0)
-  expect(within(row).getAllByText('In progress').length).toBeGreaterThan(0)
+  const item = screen.getByRole('link', { name: /save button/ })
+  expect(within(item).getByText('Bug')).toBeInTheDocument()
+  expect(within(item).getByText('In progress')).toBeInTheDocument()
+  expect(within(item).getByTitle('Answers')).toHaveTextContent('3')
 })
 
 it('filters by status, "open" meaning every status that is not closed', async () => {
   await open('/feedback')
-  await pick('Status', 'Open')
-  expect(screen.getByRole('link', { name: 'Dark mode' })).toBeInTheDocument()
-  expect(screen.queryByRole('link', { name: 'How do I change the language?' })).not.toBeInTheDocument() // Done
+  await pick('Filter by status', 'Open')
+  expect(screen.getByRole('link', { name: /Dark mode/ })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: /How do I change the language/ })).not.toBeInTheDocument() // Done
 })
 
 it('filters by type and says so when nothing matches', async () => {
   await open('/feedback')
-  await pick('Type', 'Bug')
-  expect(screen.queryByRole('link', { name: 'Dark mode' })).not.toBeInTheDocument()
-  await pick('Status', 'New')
+  await pick('Filter by type', 'Bug')
+  expect(screen.queryByRole('link', { name: /Dark mode/ })).not.toBeInTheDocument()
+  await pick('Filter by status', 'New')
   expect(screen.getByText('No feedback here.')).toBeInTheDocument()
 })
 
@@ -74,7 +75,7 @@ it('can be cancelled without creating anything', async () => {
   const dialog = await openDialog()
   await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(screen.getAllByRole('row')).toHaveLength(4) // header + my 3 feedback
+  expect(within(screen.getByRole('region', { name: 'Feedback list' })).getAllByRole('listitem')).toHaveLength(3)
 })
 
 // ---- one feedback
@@ -129,12 +130,11 @@ it('keeps the administration out of the sidebar and in the profile menu, for adm
   await open('/app', ada)
   const sidebar = document.querySelector('[data-sidebar="sidebar"]') as HTMLElement
   expect(within(sidebar).getByRole('link', { name: 'Home' })).toBeInTheDocument()
-  expect(within(sidebar).queryByRole('link', { name: 'All feedback' })).not.toBeInTheDocument()
+  expect(within(sidebar).queryByRole('link', { name: /feedback/i })).not.toBeInTheDocument()
 
   await userEvent.click(screen.getByRole('button', { name: 'Open the user menu' }))
   expect(await screen.findByText('Administration')).toBeInTheDocument()
-  expect(screen.getByRole('menuitem', { name: 'All feedback' })).toHaveAttribute('href', '/admin/feedback')
-  expect(screen.getByRole('menuitem', { name: 'Feedback settings' })).toHaveAttribute('href', '/admin/feedback/settings')
+  expect(screen.getByRole('menuitem', { name: 'Manage feedback' })).toHaveAttribute('href', '/admin/feedback')
 })
 
 it('does not show the administration to a user', async () => {
@@ -146,9 +146,9 @@ it('does not show the administration to a user', async () => {
 
 it('shows an admin all the open feedback with its author, and a user an access denied page', async () => {
   await open('/admin/feedback', ada)
-  expect(screen.getByRole('link', { name: 'Export my data as CSV' })).toBeInTheDocument()
-  expect(screen.getByText('linus')).toBeInTheDocument()
-  expect(screen.queryByRole('link', { name: 'How do I change the language?' })).not.toBeInTheDocument() // done
+  expect(screen.getByRole('link', { name: /Export my data as CSV/ })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /linus/ })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: /How do I change the language/ })).not.toBeInTheDocument() // done
 })
 
 it('refuses the administration pages to a user', async () => {
@@ -206,4 +206,52 @@ it('does not offer an archived type in the form, but keeps it on existing feedba
   await userEvent.click(within(dialog).getByRole('combobox', { name: 'Type' }))
   expect(await screen.findByRole('option', { name: 'Suggestion' })).toBeInTheDocument()
   expect(screen.queryByRole('option', { name: 'Bug' })).not.toBeInTheDocument()
+})
+
+// ---- list and detail on one page
+
+it('shows the list and, next to it, a hint until a feedback is selected', async () => {
+  const router = await open('/feedback')
+  expect(screen.getByText('Select a feedback to read it and follow up.')).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('link', { name: /Dark mode/ }))
+  expect(router.state.location.pathname).toBe('/feedback/fb-2')
+  expect(await screen.findByRole('heading', { name: 'Dark mode' })).toBeInTheDocument()
+  expect(screen.queryByText('Select a feedback to read it and follow up.')).not.toBeInTheDocument()
+  // the list is still there, with the open one marked
+  expect(screen.getByRole('link', { name: /Dark mode/ })).toHaveAttribute('aria-current', 'true')
+  expect(screen.getByRole('link', { name: /save button/ })).not.toHaveAttribute('aria-current')
+})
+
+it('opens the detail of the address, and the list can be filtered while reading', async () => {
+  await open('/feedback/fb-1')
+  expect(screen.getByRole('heading', { name: /save button/ })).toBeInTheDocument()
+  await pick('Filter by type', 'Question')
+  expect(screen.getByRole('heading', { name: /save button/ })).toBeInTheDocument() // still open
+  expect(screen.getByRole('link', { name: /save button/ })).toBeInTheDocument() // and still listed
+  expect(screen.queryByRole('link', { name: /Dark mode/ })).not.toBeInTheDocument()
+})
+
+it('keeps the feedback being read in an "open" list after it is closed', async () => {
+  await open('/feedback/fb-2')
+  await pick('Filter by status', 'Open')
+  await userEvent.click(screen.getByRole('button', { name: 'Close this feedback' }))
+  expect(screen.getByRole('link', { name: /Dark mode/ })).toBeInTheDocument()
+})
+
+it('gives the admin one page: the feedback with its detail, and the types and statuses in a second tab', async () => {
+  const router = await open('/admin/feedback', ada)
+  expect(screen.getByRole('heading', { name: 'Manage feedback' })).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('link', { name: /Export my data as CSV/ }))
+  expect(router.state.location.pathname).toBe('/admin/feedback/fb-4')
+  expect(await screen.findByRole('heading', { name: 'Export my data as CSV' })).toBeInTheDocument()
+  expect(screen.getByRole('combobox', { name: 'Status' })).toBeInTheDocument() // the admin's controls
+
+  await userEvent.click(screen.getByRole('tab', { name: 'Types and statuses' }))
+  expect(router.state.location.pathname).toBe('/admin/feedback/settings')
+  expect(await screen.findByRole('tab', { name: 'Statuses' })).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('tab', { name: 'Feedback' }))
+  expect(router.state.location.pathname).toBe('/admin/feedback')
 })
