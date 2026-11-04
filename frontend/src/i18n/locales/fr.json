@@ -1,0 +1,10 @@
+{
+  "app": { "title": "App" },
+  "auth": {
+    "loading": "Chargement...",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signedInAs": "Connecté en tant que {{name}}"
+  },
+  "language": { "label": "Langue", "en": "English", "fr": "Français" }
+}
