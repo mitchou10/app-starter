@@ -49,6 +49,40 @@ migrations/         Alembic
 **Add a feature**: a model (and a migration), a repository, a service, a schema, a router, one line in `main.py`.
 Pydantic models are used at every border (settings, requests, responses, the current user, sessions).
 
+### Configuration
+
+Every setting is an environment variable, read by `app/config.py` (and from a `.env` or `.env.local` file in `backend/`).
+The defaults suit local development; **change the ones marked \*** before any real deployment.
+
+| Variable | Default | What it is |
+| --- | --- | --- |
+| `APP_NAME` | `app` | Title of the API (and of its `/api/docs`) |
+| `DATABASE_URL` | `postgresql+asyncpg://app:app@localhost:5432/app` | PostgreSQL, through asyncpg \* |
+| `AWS_ENDPOINT_URL` | `http://localhost:9000` | The S3-compatible storage (RustFS here) |
+| `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | `rustfsadmin` | Its credentials \* |
+| `AWS_REGION`, `AWS_BUCKET` | `us-east-1`, `app` | Region, and the bucket (created on first use) |
+| `AVATAR_MAX_BYTES` | 2 MiB | Largest profile photo |
+| `FEEDBACK_MAX_ATTACHMENTS` | `5` | Screenshots per feedback or answer |
+| `FEEDBACK_ATTACHMENT_MAX_BYTES` | 5 MiB | Largest screenshot |
+| `PAGE_SIZE_MAX` | `50` | Largest `limit` a list or a follow-up can ask for |
+| `AUTH_MODE` | `oidc` | `oidc`, or `full-access`: no login, a fixed admin (development and tests only) |
+| `OIDC_ISSUER` | empty | The provider's issuer URL; empty means no login is possible |
+| `OIDC_DISCOVERY_URL` | `<issuer>/.well-known/openid-configuration` | Where to read the discovery document when the provider is not reached on its public address |
+| `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` | `app-backend`, empty | The client registered in the provider \* |
+| `OIDC_SCOPES` | `openid profile email` | Scopes asked at login |
+| `OIDC_ROLES_CLAIM`, `OIDC_GROUPS_CLAIM` | `roles`, `groups` | Where the roles and the groups are in the claims (dotted path, e.g. `realm_access.roles`) |
+| `OIDC_ADMIN_ROLE` | `admin` | The role that makes a user an admin |
+| `SESSION_COOKIE_NAME` | `session` | Name of the session cookie |
+| `SESSION_COOKIE_SECURE` | `true` | Send the cookie over HTTPS only: turn it off for plain-HTTP development only \* |
+| `SESSION_COOKIE_SAMESITE` | `lax` | `lax`, `strict` or `none` |
+| `SESSION_TTL_SECONDS` | 8 hours | Lifetime of a session |
+| `LOGIN_STATE_SECRET` | `dev-only-secret-not-for-prod` | Signs the cookie of the login redirect \* |
+| `BACKEND_PUBLIC_URL` | `http://localhost:8000` | The address the browser reaches the backend on: the callback to register in the provider is `<it>/api/auth/callback` |
+| `FRONTEND_URL` | `http://localhost:5173` | Where the browser lands after login and logout |
+
+The frontend keeps a copy of three limits to answer without sending the file: 2 MiB for a photo (`AVATAR_MAX_BYTES` in
+`src/profile/useAvatar.ts`), and 5 screenshots of 5 MiB (`ScreenshotPicker.tsx`). The backend always checks them again.
+
 ### Database and migrations
 
 PostgreSQL, `DATABASE_URL=postgresql+asyncpg://user:password@host:5432/db`. The schema only changes through Alembic:
