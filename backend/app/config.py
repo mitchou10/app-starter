@@ -8,6 +8,17 @@ class Settings(BaseSettings):
 
     APP_NAME: str = "app"
 
+    # PostgreSQL, through asyncpg.
+    DATABASE_URL: str = "postgresql+asyncpg://app:app@localhost:5432/app"
+
+    # Object storage: RustFS here, any S3-compatible service works. The usual AWS_* variables, like the SDKs read them.
+    AWS_ENDPOINT_URL: str = "http://localhost:9000"
+    AWS_ACCESS_KEY_ID: str = "rustfsadmin"
+    AWS_SECRET_ACCESS_KEY: str = "rustfsadmin"
+    AWS_REGION: str = "us-east-1"
+    AWS_BUCKET: str = "app"
+    AVATAR_MAX_BYTES: int = 2 * 1024 * 1024
+
     # "oidc": real authentication. "full-access": no identity provider, a fixed dev identity for every request
     # (local development without Keycloak, unit tests).
     AUTH_MODE: Literal["oidc", "full-access"] = "oidc"
