@@ -4,7 +4,6 @@
   },
   "auth": {
     "signIn": "Se connecter",
-    "signOut": "Se déconnecter",
     "required": "Vous devez vous connecter pour voir cette page.",
     "openApp": "Ouvrir l'application"
   },
@@ -125,11 +124,6 @@
       "allTypes": "Tous les types"
     },
     "list": {
-      "title": "Titre",
-      "type": "Type",
-      "status": "Statut",
-      "author": "Auteur",
-      "updated": "Mis à jour",
       "replies": "Réponses",
       "empty": "Aucun retour ici.",
       "myTitle": "Mes retours",

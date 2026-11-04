@@ -4,7 +4,6 @@
   },
   "auth": {
     "signIn": "Sign in",
-    "signOut": "Sign out",
     "required": "You need to sign in to see this page.",
     "openApp": "Open the app"
   },
@@ -125,11 +124,6 @@
       "allTypes": "All types"
     },
     "list": {
-      "title": "Title",
-      "type": "Type",
-      "status": "Status",
-      "author": "Author",
-      "updated": "Updated",
       "replies": "Answers",
       "empty": "No feedback here.",
       "myTitle": "My feedback",
