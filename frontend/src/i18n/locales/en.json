@@ -5,7 +5,8 @@
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "required": "You need to sign in to see this page."
+    "required": "You need to sign in to see this page.",
+    "openApp": "Open the app"
   },
   "language": {
     "label": "Language",
@@ -48,16 +49,28 @@
     }
   },
   "footer": "© {{year}} App. All rights reserved.",
-  "nav": {
-    "features": "Features"
-  },
+  "nav": {},
   "notFound": {
     "title": "Page not found",
     "description": "The page you are looking for does not exist.",
     "back": "Back to home"
   },
-  "account": {
-    "title": "My account",
+  "appNav": {
+    "home": "Home",
+    "toggle": "Toggle the sidebar"
+  },
+  "userMenu": {
+    "open": "Open the user menu",
+    "settings": "Settings",
+    "language": "Language",
+    "signOut": "Sign out"
+  },
+  "appHome": {
+    "welcome": "Welcome, {{name}}",
+    "empty": "Nothing here yet: this is where your product starts."
+  },
+  "settings": {
+    "title": "Settings",
     "name": "Name",
     "email": "Email",
     "roles": "Roles"

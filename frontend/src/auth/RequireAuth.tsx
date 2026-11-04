@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router'
-import { Section } from '@/components/Section'
-import { Button } from '@/components/ui/button'
 import { useCurrentUser } from './AuthProvider'
+import { Button } from '@/components/ui/button'
 
 /**
  * Layout route: everything nested inside needs a logged-in user. Anyone else gets a sign-in button that brings
@@ -17,9 +16,9 @@ export function RequireAuth() {
   if (user) return <Outlet />
 
   return (
-    <Section className="text-center">
-      <p className="mb-6 text-lg">{t('auth.required')}</p>
+    <main className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 text-center">
+      <p className="text-lg">{t('auth.required')}</p>
       <Button onClick={() => login(pathname + search)}>{t('auth.signIn')}</Button>
-    </Section>
+    </main>
   )
 }

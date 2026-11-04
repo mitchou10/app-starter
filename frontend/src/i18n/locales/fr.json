@@ -5,7 +5,8 @@
   "auth": {
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
-    "required": "Vous devez vous connecter pour voir cette page."
+    "required": "Vous devez vous connecter pour voir cette page.",
+    "openApp": "Ouvrir l'application"
   },
   "language": {
     "label": "Langue",
@@ -48,16 +49,28 @@
     }
   },
   "footer": "© {{year}} App. Tous droits réservés.",
-  "nav": {
-    "features": "Fonctionnalités"
-  },
+  "nav": {},
   "notFound": {
     "title": "Page introuvable",
     "description": "La page que vous cherchez n'existe pas.",
     "back": "Retour à l'accueil"
   },
-  "account": {
-    "title": "Mon compte",
+  "appNav": {
+    "home": "Accueil",
+    "toggle": "Afficher ou masquer la barre latérale"
+  },
+  "userMenu": {
+    "open": "Ouvrir le menu utilisateur",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "signOut": "Se déconnecter"
+  },
+  "appHome": {
+    "welcome": "Bienvenue, {{name}}",
+    "empty": "Rien ici pour l'instant : c'est ici que commence votre produit."
+  },
+  "settings": {
+    "title": "Paramètres",
     "name": "Nom",
     "email": "E-mail",
     "roles": "Rôles"
