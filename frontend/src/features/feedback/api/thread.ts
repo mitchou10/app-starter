@@ -4,7 +4,7 @@ import { THREAD_PAGE_SIZE } from '../pagination'
 import { api } from './client'
 import { keys } from './keys'
 import { toMessagesPage } from './mappers'
-import type { FeedbackMessage } from './model'
+import type { FeedbackMessage } from '../types'
 import type { WireMessage, WireMessagesPage } from './wire'
 
 type Pages = InfiniteData<WireMessagesPage, string | undefined>
@@ -46,6 +46,7 @@ export function useThread(feedbackId: string) {
     loadingOlder: query.isFetchingNextPage,
     isLoading: query.isPending,
     isError: query.isError,
+    error: query.error,
   }
 }
 

@@ -6,10 +6,11 @@ import { refreshNewest } from './thread'
 import type { WireFeedback } from './wire'
 
 /** One feedback. A 404 (it does not exist, or it is not yours) is an error the screen shows as "not found". */
-export function useFeedbackDetail(feedbackId: string) {
+export function useFeedbackDetail(feedbackId: string | undefined) {
   return useQuery({
-    queryKey: keys.detail(feedbackId),
+    queryKey: keys.detail(feedbackId ?? ''),
     queryFn: async () => toFeedback(await api<WireFeedback>(`/api/feedback/${feedbackId}`)),
+    enabled: feedbackId !== undefined,
     retry: false,
   })
 }

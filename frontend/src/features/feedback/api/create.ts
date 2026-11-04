@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from './client'
 import { keys } from './keys'
 import { toFeedback } from './mappers'
-import type { NewFeedback } from './model'
+import type { NewFeedback } from '../types'
 import type { WireFeedback } from './wire'
 
 /** Send a feedback, with its screenshots and the page it was sent from. */

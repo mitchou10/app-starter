@@ -1,21 +1,21 @@
 import { useEffect } from 'react'
-import { useFeedback } from '../FeedbackProvider'
+import { useFeedbackDialog } from '../FeedbackDialogProvider'
 import { isFeedbackShortcut } from '../shortcut'
 import { FeedbackDialog } from './FeedbackDialog'
 
 /** The "Give feedback" modal and the keyboard shortcut that opens it, mounted once inside the app layout. */
 export function FeedbackLauncher() {
-  const { dialog, openDialog } = useFeedback()
+  const { open, openDialog } = useFeedbackDialog()
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!isFeedbackShortcut(event)) return
       event.preventDefault() // not the browser's own meaning of the key
-      if (!dialog.open) openDialog()
+      if (!open) openDialog()
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [dialog.open, openDialog])
+  }, [open, openDialog])
 
   return <FeedbackDialog />
 }

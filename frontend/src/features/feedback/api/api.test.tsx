@@ -1,7 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
-import { expect, it, vi } from 'vitest'
+import { afterEach, expect, it, vi } from 'vitest'
 import { ada, bob, Reply, stubBackend, testQueryClient } from '@/test/render'
 import { api, ApiError } from './client'
 import { useCreateFeedback } from './create'
@@ -10,7 +10,7 @@ import { errorKind } from './errors'
 import { useFeedbackList } from './list'
 import { toFeedback, toMessage, toStatus, toSummary } from './mappers'
 import { useArchiveReference, useReferences, useSaveReference } from './references'
-import { refreshNewest, useReply, useThread } from './thread'
+import { refreshNewest, useLiveRefresh, useReply, useThread } from './thread'
 import type { WireMessagesPage } from './wire'
 
 function setup(user = ada) {
@@ -21,6 +21,11 @@ function setup(user = ada) {
 }
 
 const NO_FILTER = { status: 'all', type: 'all' }
+
+afterEach(() => {
+  vi.useRealTimers()
+  vi.restoreAllMocks()
+})
 
 // ---- the client
 
@@ -60,7 +65,8 @@ it('names what went wrong for the screen', () => {
   const kind = (status: number, message = '') => errorKind(new ApiError(status, message))
   expect(kind(403)).toBe('forbidden')
   expect(kind(404)).toBe('notFound')
-  expect(kind(409)).toBe('duplicate')
+  expect(kind(409, 'A value with this name already exists')).toBe('duplicate')
+  expect(kind(409, 'This status is used by the app itself and cannot be archived')).toBe('conflict')
   expect(kind(413)).toBe('tooLarge')
   expect(kind(415)).toBe('unsupported')
   expect(kind(422, 'Too many screenshots')).toBe('tooMany')
@@ -258,6 +264,42 @@ it('refuses an answer the backend refuses', async () => {
   await expect(reply.result.current.mutateAsync({ body: '   ', files: [] })).rejects.toMatchObject({ status: 422 })
   const bad = new File(['x'], 'a.gif', { type: 'image/gif' })
   await expect(reply.result.current.mutateAsync({ body: 'hi', files: [bad] })).rejects.toMatchObject({ status: 415 })
+})
+
+it('picks up what others add every few seconds, and only while the page is visible', async () => {
+  vi.useFakeTimers({ shouldAdvanceTime: true })
+  const { wrapper, fake } = setup()
+  const thread = renderHook(() => useThread('fb-2'), { wrapper })
+  renderHook(() => useLiveRefresh('fb-2', 1000), { wrapper })
+  await waitFor(() => expect(thread.result.current.isLoading).toBe(false))
+  const server = fake.feedbacks.find((f) => f.id === 'fb-2')!
+  const arrives = (id: string) =>
+    server.messages.push({ ...server.messages[0], id, kind: 'comment', body: id, created_at: `2026-11-09T10:00:0${server.messages.length % 10}Z`, attachments: [] })
+
+  arrives('first-late')
+  await act(() => vi.advanceTimersByTimeAsync(1100))
+  await waitFor(() => expect(thread.result.current.messages.at(-1)?.body).toBe('first-late'))
+
+  vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
+  arrives('second-late')
+  await act(() => vi.advanceTimersByTimeAsync(2500))
+  expect(thread.result.current.messages.at(-1)?.body).toBe('first-late') // nobody is looking: nothing is fetched
+
+  vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible')
+  await act(() => vi.advanceTimersByTimeAsync(1100))
+  await waitFor(() => expect(thread.result.current.messages.at(-1)?.body).toBe('second-late'))
+})
+
+it('stops asking when the feedback is closed', async () => {
+  vi.useFakeTimers({ shouldAdvanceTime: true })
+  const { wrapper } = setup()
+  const live = renderHook(() => useLiveRefresh('fb-2', 1000), { wrapper })
+  const calls = () => vi.mocked(fetch).mock.calls.filter(([url]) => String(url).includes('/messages')).length
+  await act(() => vi.advanceTimersByTimeAsync(1100))
+  live.unmount()
+  const before = calls()
+  await act(() => vi.advanceTimersByTimeAsync(5000))
+  expect(calls()).toBe(before)
 })
 
 // ---- sending

@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { useCurrentUser } from '@/auth/AuthProvider'
 import { UserAvatar } from '@/components/UserAvatar'
 import { ADMIN_NAV } from '@/layouts/appNav'
-import { useFeedback } from '@/features/feedback/FeedbackProvider'
+import { useFeedbackDialog } from '@/features/feedback/FeedbackDialogProvider'
 import { shortcutLabel } from '@/features/feedback/shortcut'
 import {
   DropdownMenu,
@@ -29,7 +29,7 @@ export function UserMenu() {
   const { t } = useTranslation()
   const { user, avatarVersion, logout } = useCurrentUser()
   const { current, languages, change } = useLanguage()
-  const { openDialog } = useFeedback()
+  const { openDialog } = useFeedbackDialog()
   if (!user) return null
 
   const name = user.name || user.username || user.email

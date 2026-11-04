@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { Container } from '@/components/Container'
 import { Button } from '@/components/ui/button'
 import { FeedbackWorkspace } from '../components/FeedbackWorkspace'
-import { useFeedback } from '../FeedbackProvider'
+import { useFeedbackDialog } from '../FeedbackDialogProvider'
 
 /** "My feedback": what the user sent, with the follow-up of the selected one next to it. */
 export function MyFeedbackPage() {
   const { t } = useTranslation()
-  const { mine, openDialog } = useFeedback()
+  const { openDialog } = useFeedbackDialog()
 
   return (
     <Container className="max-w-7xl py-8">
@@ -22,7 +22,7 @@ export function MyFeedbackPage() {
           {t('feedback.list.new')}
         </Button>
       </div>
-      <FeedbackWorkspace feedbacks={mine} basePath="/feedback" />
+      <FeedbackWorkspace scope="mine" basePath="/feedback" />
     </Container>
   )
 }

@@ -1,9 +1,12 @@
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import { useCurrentUser } from '@/auth/AuthProvider'
-import { useFeedback } from '../FeedbackProvider'
+import { useFeedbackDetail } from '../api/detail'
+import { errorKind } from '../api/errors'
+import { useReferences } from '../api/references'
+import { useLiveRefresh, useThread } from '../api/thread'
 import { byId, formatDate } from '../format'
+import { ErrorNotice } from './ErrorNotice'
 import { FeedbackControls } from './FeedbackControls'
 import { FeedbackThread } from './FeedbackThread'
 import { ReferenceBadge } from './ReferenceBadge'
@@ -19,11 +22,10 @@ interface FeedbackDetailProps {
 /** One feedback with its follow-up. Shared by the author and the admins. */
 export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
   const { t, i18n } = useTranslation()
-  const { user } = useCurrentUser()
-  const { get, types, statuses, reply } = useFeedback()
-  const feedback = get(feedbackId)
-  // Someone else's feedback looks like it does not exist, unless the viewer is an admin.
-  const visible = feedback && (user?.is_admin || feedback.createdBy === user?.user_id)
+  const detail = useFeedbackDetail(feedbackId)
+  const thread = useThread(feedbackId)
+  const { types, statuses } = useReferences()
+  useLiveRefresh(feedbackId)
 
   const back = (
     <Link to={listPath} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground lg:hidden">
@@ -32,15 +34,25 @@ export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
     </Link>
   )
 
-  if (!feedback || !visible) {
+  if (detail.isPending) {
+    return <p className="p-8 text-center text-sm text-muted-foreground">{t('feedback.state.loading')}</p>
+  }
+
+  if (detail.isError) {
+    // Somebody else's feedback looks like it does not exist, for the backend says 404 to anyone but the author and the admins.
     return (
       <div className="grid gap-4">
         {back}
-        <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">{t('feedback.detail.notFound')}</p>
+        {errorKind(detail.error) === 'notFound' ? (
+          <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">{t('feedback.detail.notFound')}</p>
+        ) : (
+          <ErrorNotice error={detail.error} />
+        )}
       </div>
     )
   }
 
+  const feedback = detail.data
   const type = byId(types, feedback.typeId)
   const status = byId(statuses, feedback.statusId)
 
@@ -76,9 +88,16 @@ export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
       </div>
 
       <div className="flex min-h-48 flex-1 flex-col">
-        <FeedbackThread key={feedback.id} messages={feedback.messages} />
+        <FeedbackThread
+          messages={thread.messages}
+          hidden={thread.hidden}
+          loading={thread.isLoading}
+          loadingOlder={thread.loadingOlder}
+          onLoadOlder={thread.loadOlder}
+        />
+        {thread.isError && <ErrorNotice error={thread.error} className="mt-2 text-sm text-destructive" />}
       </div>
-      <ReplyBox onSend={(body, files) => reply(feedback.id, body, files)} />
+      <ReplyBox feedbackId={feedback.id} />
     </article>
   )
 }

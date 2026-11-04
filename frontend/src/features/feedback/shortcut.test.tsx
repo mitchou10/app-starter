@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { bob, renderApp, stubBackend } from '@/test/render'
@@ -10,6 +10,7 @@ async function open(path: string) {
   stubBackend(bob)
   const router = renderApp(path)
   await screen.findByRole('button', { name: 'Open the user menu' })
+  await waitFor(() => expect(screen.queryByText('Loading...')).not.toBeInTheDocument())
   return router
 }
 

@@ -5,14 +5,12 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FeedbackSettings } from '../components/FeedbackSettings'
 import { FeedbackWorkspace } from '../components/FeedbackWorkspace'
 import { NO_FILTER } from '../components/FeedbackFilters'
-import { useFeedback } from '../FeedbackProvider'
 
 const BASE = '/admin/feedback'
 
 /** Admin: every feedback with its follow-up, and (second tab) the types and statuses. One page. */
 export function AdminFeedbackPage({ view }: { view: 'feedback' | 'settings' }) {
   const { t } = useTranslation()
-  const { feedbacks } = useFeedback()
   const navigate = useNavigate()
 
   return (
@@ -30,7 +28,7 @@ export function AdminFeedbackPage({ view }: { view: 'feedback' | 'settings' }) {
         </Tabs>
       </div>
       {view === 'feedback' ? (
-        <FeedbackWorkspace feedbacks={feedbacks} basePath={BASE} showAuthor initialFilters={{ ...NO_FILTER, status: 'open' }} />
+        <FeedbackWorkspace scope="all" basePath={BASE} showAuthor initialFilters={{ ...NO_FILTER, status: 'open' }} />
       ) : (
         <FeedbackSettings />
       )}
