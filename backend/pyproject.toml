@@ -54,6 +54,8 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.coverage.run]
 source = ["app"]
 branch = true
+# SQLAlchemy's asyncio support runs the code in greenlets: without this, the lines after the first await are not seen.
+concurrency = ["thread", "greenlet"]
 omit = ["*/migrations/*"]
 
 [tool.coverage.report]
