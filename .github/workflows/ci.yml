@@ -98,7 +98,7 @@ jobs:
       CONTEXT: backend
       TARGET: runtime
 
-  # ---- frontend (Vue / pnpm): no reusable workflow for it yet, so inline ----
+  # ---- frontend (React / pnpm): no reusable workflow for it yet, so inline ----
   frontend:
     needs: paths
     if: contains(fromJSON(needs.paths.outputs.changed), 'frontend')
