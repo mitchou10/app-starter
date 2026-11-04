@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0](https://github.com/mitchou10/app-starter/compare/backend-v0.2.0...backend-v0.3.0) (2026-11-04)
+
+
+### Features
+
+* **backend:** add the feedback tables with their default types and statuses ([63694c9](https://github.com/mitchou10/app-starter/commit/63694c957c49e57dbeb468c928b58f104870f793))
+* **backend:** list, add, change and archive the feedback types and statuses ([0d606e8](https://github.com/mitchou10/app-starter/commit/0d606e83f1bfa16d6102a92c34a66f709b8bc842))
+* **backend:** send feedback with screenshots, follow it and list it ([403fe76](https://github.com/mitchou10/app-starter/commit/403fe76386cd1e132d74cd60dd01b8307b0072da))
+
+
+### Code Refactoring
+
+* **backend:** share the image checks and group the service errors ([f72f28f](https://github.com/mitchou10/app-starter/commit/f72f28f64128911ec4c1049135646c779aa59237))
+
+
+### Dependencies
+
+* **backend:** measure the code that runs in greenlets ([a9adde6](https://github.com/mitchou10/app-starter/commit/a9adde65b44086a70c6b2ad3f0e806fd1b5b6cc2))
+
 ## [0.2.0](https://github.com/mitchou10/app-starter/compare/backend-v0.1.0...backend-v0.2.0) (2026-11-04)
 
 
