@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     FEEDBACK_ATTACHMENT_MAX_BYTES: int = 5 * 1024 * 1024
     PAGE_SIZE_MAX: int = 50
 
+    # Notifications: the applications allowed to emit them, as `name=key` pairs separated by commas. The name becomes
+    # the `source` of what they emit; a key shorter than 16 characters is ignored. Empty: nobody can emit.
+    NOTIFICATION_API_KEYS: str = ""
+
     # "oidc": real authentication. "full-access": no identity provider, a fixed dev identity for every request
     # (local development without Keycloak, unit tests).
     AUTH_MODE: Literal["oidc", "full-access"] = "oidc"
@@ -58,6 +62,12 @@ class Settings(BaseSettings):
     @property
     def discovery_url(self) -> str:
         return self.OIDC_DISCOVERY_URL or f"{self.OIDC_ISSUER.rstrip('/')}/.well-known/openid-configuration"
+
+    @property
+    def notification_emitters(self) -> dict[str, str]:
+        """The key of each emitter, and its name: `{"the-key": "billing"}`."""
+        pairs = (pair.partition("=") for pair in self.NOTIFICATION_API_KEYS.split(",") if pair.strip())
+        return {key.strip(): name.strip() for name, _, key in pairs if name.strip() and len(key.strip()) >= 16}
 
     @property
     def callback_url(self) -> str:

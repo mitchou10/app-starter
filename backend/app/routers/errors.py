@@ -10,6 +10,7 @@ STATUS_CODES: dict[type[errors.ServiceError], int] = {
     errors.AttachmentNotFound: status.HTTP_404_NOT_FOUND,
     errors.ReferenceNotFound: status.HTTP_404_NOT_FOUND,
     errors.AvatarNotFound: status.HTTP_404_NOT_FOUND,
+    errors.NotificationNotFound: status.HTTP_404_NOT_FOUND,
     errors.NotAllowed: status.HTTP_403_FORBIDDEN,
     errors.DuplicateName: status.HTTP_409_CONFLICT,
     errors.ProtectedStatus: status.HTTP_409_CONFLICT,
@@ -21,6 +22,7 @@ STATUS_CODES: dict[type[errors.ServiceError], int] = {
     errors.InvalidCursor: status.HTTP_422_UNPROCESSABLE_CONTENT,
     errors.InvalidPage: status.HTTP_422_UNPROCESSABLE_CONTENT,
     errors.EmptyMessage: status.HTTP_422_UNPROCESSABLE_CONTENT,
+    errors.InvalidUrl: status.HTTP_422_UNPROCESSABLE_CONTENT,
 }
 
 
