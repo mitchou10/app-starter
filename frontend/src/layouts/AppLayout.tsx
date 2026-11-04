@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router'
+import { FeedbackLauncher } from '@/features/feedback/components/FeedbackLauncher'
 import { FeedbackProvider } from '@/features/feedback/FeedbackProvider'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -14,6 +15,7 @@ export function AppLayout() {
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
+        <FeedbackLauncher />
         <SidebarInset>
           <header className="flex h-14 items-center gap-2 px-4">
             <SidebarTrigger aria-label={t('appNav.toggle')} />

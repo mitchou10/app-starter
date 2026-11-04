@@ -11,7 +11,14 @@ import { OptionSelect } from './OptionSelect'
 import { ScreenshotPicker } from './ScreenshotPicker'
 
 /** Title, description, type and screenshots. Knows nothing about where it is shown (a dialog, a page...). */
-export function FeedbackForm({ onSubmit, onCancel }: { onSubmit: (feedback: NewFeedback) => void; onCancel?: () => void }) {
+interface FeedbackFormProps {
+  onSubmit: (feedback: NewFeedback) => void
+  onCancel?: () => void
+  /** The page the user was on, offered as an attachment. */
+  page?: string | null
+}
+
+export function FeedbackForm({ onSubmit, onCancel, page = null }: FeedbackFormProps) {
   const { t } = useTranslation()
   const { types } = useFeedback()
   const options = offered(types).map((type) => ({ value: type.id, label: type.name }))
@@ -19,6 +26,7 @@ export function FeedbackForm({ onSubmit, onCancel }: { onSubmit: (feedback: NewF
   const [description, setDescription] = useState('')
   const [typeId, setTypeId] = useState('')
   const [files, setFiles] = useState<File[]>([])
+  const [attachPage, setAttachPage] = useState(true)
   const [tried, setTried] = useState(false)
 
   const missing = { title: !title.trim(), description: !description.trim(), type: !typeId }
@@ -31,7 +39,7 @@ export function FeedbackForm({ onSubmit, onCancel }: { onSubmit: (feedback: NewF
       onSubmit={(event) => {
         event.preventDefault()
         setTried(true)
-        if (valid) onSubmit({ title: title.trim(), description: description.trim(), typeId, files })
+        if (valid) onSubmit({ title: title.trim(), description: description.trim(), typeId, files, page: attachPage ? page : null })
       }}
     >
       <div className="grid gap-2">
@@ -56,6 +64,15 @@ export function FeedbackForm({ onSubmit, onCancel }: { onSubmit: (feedback: NewF
         <Label>{t('feedback.form.screenshots')}</Label>
         <ScreenshotPicker files={files} onChange={setFiles} />
       </div>
+
+      {page && (
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={attachPage} onChange={(event) => setAttachPage(event.target.checked)} />
+          <span>
+            {t('feedback.form.attachPage')} <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{page}</code>
+          </span>
+        </label>
+      )}
 
       <div className="flex justify-end gap-2">
         {onCancel && (

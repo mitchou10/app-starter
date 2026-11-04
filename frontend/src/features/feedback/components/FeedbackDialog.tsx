@@ -4,29 +4,28 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useFeedback } from '../FeedbackProvider'
 import { FeedbackForm } from './FeedbackForm'
 
-interface FeedbackDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-/** "Give feedback": opened from the profile menu or from the list. After sending, goes to the new feedback. */
-export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
+/**
+ * "Give feedback", a modal. Mounted once in the app layout (see FeedbackLauncher) and opened with `openDialog()`, from
+ * the profile menu, a button or the keyboard shortcut. After sending, goes to the new feedback.
+ */
+export function FeedbackDialog() {
   const { t } = useTranslation()
-  const { create } = useFeedback()
+  const { dialog, closeDialog, create } = useFeedback()
   const navigate = useNavigate()
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={dialog.open} onOpenChange={(open) => !open && closeDialog()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t('feedback.dialog.title')}</DialogTitle>
           <DialogDescription>{t('feedback.dialog.description')}</DialogDescription>
         </DialogHeader>
         <FeedbackForm
-          onCancel={() => onOpenChange(false)}
+          page={dialog.page}
+          onCancel={closeDialog}
           onSubmit={(input) => {
             const feedback = create(input)
-            onOpenChange(false)
+            closeDialog()
             void navigate(`/feedback/${feedback.id}`)
           }}
         />

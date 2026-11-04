@@ -63,7 +63,7 @@ const COLLEAGUES = [
  * rest of the examples) and 20 from colleagues, in every status. All older than the hand-written ones.
  */
 function bulk(me: { id: string; username: string }): Feedback[] {
-  const base = { attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
+  const base = { page: null as string | null, attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
   const mine = Array.from({ length: 9 }, (_, i): Feedback => ({
     ...base,
     id: `fb-m${i + 1}`,
@@ -102,11 +102,12 @@ export function buildMockFeedbacks(me: { id: string; username: string }): Feedba
 }
 
 function handWritten(me: { id: string; username: string }): Feedback[] {
-  const base = { updatedAt: '2026-11-03T10:00:00Z', attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
+  const base = { updatedAt: '2026-11-03T10:00:00Z', page: null as string | null, attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
   return [
     {
       ...base,
       id: 'fb-1',
+      page: '/settings',
       title: 'The save button does nothing on the settings page',
       description: 'I click "Save" after changing my name and nothing happens: no message, and the old name is still there after a reload.\n\nHappens on Firefox and Chrome.',
       typeId: 'bug',
@@ -160,6 +161,7 @@ function handWritten(me: { id: string; username: string }): Feedback[] {
     {
       ...base,
       id: 'fb-4',
+      page: '/feedback?tab=exports',
       title: 'Export my data as CSV',
       description: 'We need to export the list to a spreadsheet every week.',
       typeId: 'suggestion',

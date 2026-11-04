@@ -53,6 +53,14 @@ export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
           {type && <ReferenceBadge name={type.name} tone={type.tone} />}
           {status && <ReferenceBadge name={status.name} tone={status.tone} />}
           <span>{t('feedback.detail.by', { name: feedback.createdByUsername, date: formatDate(feedback.createdAt, i18n.language, true) })}</span>
+          {feedback.page && (
+            <span>
+              {t('feedback.detail.page')}{' '}
+              <Link to={feedback.page} className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground hover:underline">
+                {feedback.page}
+              </Link>
+            </span>
+          )}
         </div>
         <FeedbackControls feedback={feedback} />
       </header>

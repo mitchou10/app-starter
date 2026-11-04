@@ -1,5 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 import { afterEach, beforeEach, expect, it } from 'vitest'
 import { FeedbackThread } from './components/FeedbackThread'
 import { FeedbackProvider } from './FeedbackProvider'
@@ -39,9 +40,11 @@ function renderThread(messages: FeedbackMessage[], pageSize?: number) {
   stubBackend(ada)
   const ui = (list: FeedbackMessage[]) => (
     <AuthProvider>
-      <FeedbackProvider>
-        <FeedbackThread messages={list} pageSize={pageSize} />
-      </FeedbackProvider>
+      <MemoryRouter>
+        <FeedbackProvider>
+          <FeedbackThread messages={list} pageSize={pageSize} />
+        </FeedbackProvider>
+      </MemoryRouter>
     </AuthProvider>
   )
   const view = render(ui(messages))
