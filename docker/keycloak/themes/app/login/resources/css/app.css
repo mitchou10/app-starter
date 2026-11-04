@@ -1,0 +1,198 @@
+/*
+ * Login page of Keycloak, restyled like the frontend (shadcn/ui, "neutral" theme).
+ * The colors, radius and font come from tokens.css, generated from frontend/src/style.css.
+ */
+
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../fonts/geist.woff2') format('woff2-variations');
+}
+
+:root {
+  --pf-global--FontFamily--sans-serif: 'Geist Variable', system-ui, sans-serif;
+  --pf-global--FontFamily--heading--sans-serif: 'Geist Variable', system-ui, sans-serif;
+  --pf-global--FontFamily--text: 'Geist Variable', system-ui, sans-serif;
+  --pf-global--FontFamily--heading: 'Geist Variable', system-ui, sans-serif;
+  --pf-global--BorderRadius--sm: calc(var(--radius) * 0.8);
+}
+
+/* ---- page ---- */
+.login-pf body {
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: 'Geist Variable', system-ui, sans-serif;
+}
+
+.login-pf .container {
+  padding-top: 4rem;
+}
+
+#kc-header {
+  color: var(--foreground);
+}
+
+#kc-header-wrapper {
+  padding: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: center;
+}
+
+/* ---- card ---- */
+.login-pf-page .card-pf {
+  max-width: 26rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-top-width: 1px;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+h1#kc-page-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+}
+
+/* ---- fields ---- */
+.pf-c-form__label-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.login-pf .pf-c-form-control {
+  height: 2.25rem;
+  padding: 0.25rem 0.75rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) * 0.8);
+  font-size: 0.875rem;
+}
+
+.login-pf .pf-c-form-control:focus,
+.login-pf .pf-c-form-control:focus-within {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+
+.login-pf .pf-c-form-control::after {
+  display: none; /* PatternFly's animated bottom border */
+}
+
+.login-pf .pf-c-form-control[aria-invalid='true'] {
+  border-color: var(--destructive);
+}
+
+.pf-c-form__helper-text.pf-m-error,
+.pf-c-form__helper-text,
+span.pf-c-form__helper-text {
+  color: var(--destructive);
+  font-size: 0.875rem;
+}
+
+/* ---- buttons ---- */
+.login-pf .pf-c-button {
+  height: 2.25rem;
+  padding: 0 1rem;
+  border-radius: calc(var(--radius) * 0.8);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.login-pf .pf-c-button.pf-m-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid transparent;
+}
+
+.login-pf .pf-c-button.pf-m-primary:hover,
+.login-pf .pf-c-button.pf-m-primary:focus {
+  background: color-mix(in oklab, var(--primary) 80%, transparent);
+  color: var(--primary-foreground);
+}
+
+.login-pf .pf-c-button.pf-m-secondary,
+.login-pf .pf-c-button.pf-m-control {
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.login-pf .pf-c-button.pf-m-secondary:hover,
+.login-pf .pf-c-button.pf-m-control:hover {
+  background: var(--muted);
+}
+
+.login-pf .pf-c-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+
+/* ---- links and small texts ---- */
+.login-pf a {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.login-pf a:hover {
+  color: var(--muted-foreground);
+}
+
+#kc-info,
+#kc-registration,
+.pf-c-check__label,
+p.instruction {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+#kc-form-options,
+#kc-form-buttons {
+  margin-top: 1rem;
+}
+
+/* ---- messages ---- */
+.pf-c-alert {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.8);
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+.pf-c-alert.pf-m-danger {
+  border-color: var(--destructive);
+}
+
+.pf-c-alert.pf-m-danger .pf-c-alert__title,
+.pf-c-alert.pf-m-danger .pf-c-alert__icon {
+  color: var(--destructive);
+}
+
+/* ---- language menu ---- */
+#kc-locale ul {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.8);
+}
+
+#kc-locale-dropdown a,
+#kc-locale-dropdown button {
+  color: var(--muted-foreground);
+  text-decoration: none;
+}

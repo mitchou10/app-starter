@@ -1,13 +1,29 @@
 {
   "realm": "app",
+  "displayName": "App",
+  "displayNameHtml": "App",
+  "loginTheme": "app",
   "enabled": true,
   "sslRequired": "external",
   "registrationAllowed": false,
   "accessTokenLifespan": 300,
   "ssoSessionIdleTimeout": 1800,
   "ssoSessionMaxLifespan": 36000,
-  "roles": { "realm": [{ "name": "admin" }, { "name": "user" }] },
-  "groups": [{ "name": "team-a" }],
+  "roles": {
+    "realm": [
+      {
+        "name": "admin"
+      },
+      {
+        "name": "user"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "team-a"
+    }
+  ],
   "clients": [
     {
       "clientId": "app-backend",
@@ -19,10 +35,22 @@
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "secret": "dev-only-secret-not-for-prod",
-      "redirectUris": ["http://localhost:8000/api/auth/callback", "http://localhost:5173/api/auth/callback"],
-      "webOrigins": ["http://localhost:5173"],
-      "defaultClientScopes": ["openid", "profile", "email", "roles"],
-      "attributes": { "post.logout.redirect.uris": "http://localhost:5173" },
+      "redirectUris": [
+        "http://localhost:8000/api/auth/callback",
+        "http://localhost:5173/api/auth/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:5173"
+      },
       "protocolMappers": [
         {
           "name": "realm-roles",
@@ -62,9 +90,20 @@
       "lastName": "User",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "dev", "temporary": false }],
-      "realmRoles": ["admin", "user"],
-      "groups": ["team-a"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "dev",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "user"
+      ],
+      "groups": [
+        "team-a"
+      ]
     }
   ]
 }
