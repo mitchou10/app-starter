@@ -1,20 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import { Section } from '@/components/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ReferenceManager } from '../components/ReferenceManager'
 import { useFeedback } from '../FeedbackProvider'
+import { ReferenceManager } from './ReferenceManager'
 
 /** Admin: the types and the statuses people can choose from. */
-export function AdminFeedbackSettingsPage() {
+export function FeedbackSettings() {
   const { t } = useTranslation()
   const { types, statuses, saveType, saveStatus, setArchived } = useFeedback()
 
   return (
-    <Section className="py-8 sm:py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">{t('feedback.admin.settingsTitle')}</h1>
-        <p className="text-muted-foreground">{t('feedback.admin.settingsDescription')}</p>
-      </div>
+    <div className="grid gap-4">
+      <p className="text-muted-foreground">{t('feedback.admin.settingsDescription')}</p>
       <Tabs defaultValue="types">
         <TabsList>
           <TabsTrigger value="types">{t('feedback.admin.types')}</TabsTrigger>
@@ -36,6 +32,6 @@ export function AdminFeedbackSettingsPage() {
           />
         </TabsContent>
       </Tabs>
-    </Section>
+    </div>
   )
 }

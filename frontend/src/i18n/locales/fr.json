@@ -58,8 +58,7 @@
   "appNav": {
     "home": "Accueil",
     "toggle": "Afficher ou masquer la barre latérale",
-    "adminFeedback": "Tous les retours",
-    "adminFeedbackSettings": "Réglages des retours"
+    "adminFeedback": "Gérer les retours"
   },
   "userMenu": {
     "open": "Ouvrir le menu utilisateur",
@@ -117,8 +116,8 @@
       "description": "Un bug, une idée, une question : dites-le nous. Nous répondons dans Mes retours."
     },
     "filters": {
-      "status": "Statut",
-      "type": "Type",
+      "status": "Filtrer par statut",
+      "type": "Filtrer par type",
       "allStatuses": "Tous les statuts",
       "open": "Ouverts",
       "allTypes": "Tous les types"
@@ -133,7 +132,8 @@
       "empty": "Aucun retour ici.",
       "myTitle": "Mes retours",
       "myDescription": "Ce que vous nous avez envoyé et où cela en est.",
-      "new": "Nouveau retour"
+      "new": "Nouveau retour",
+      "label": "Liste des retours"
     },
     "thread": {
       "statusChanged": "{{name}} a changé le statut",
@@ -152,7 +152,9 @@
     "detail": {
       "notFound": "Ce retour n'existe pas.",
       "back": "Retour à la liste",
-      "by": "par {{name}} le {{date}}"
+      "by": "par {{name}} le {{date}}",
+      "label": "Retour sélectionné",
+      "select": "Sélectionnez un retour pour le lire et le suivre."
     },
     "tones": {
       "gray": "Gris",
@@ -163,9 +165,6 @@
       "violet": "Violet"
     },
     "admin": {
-      "listTitle": "Tous les retours",
-      "listDescription": "Tout ce que les utilisateurs ont envoyé. Ouvrez-en un pour répondre ou changer son statut.",
-      "settingsTitle": "Réglages des retours",
       "settingsDescription": "Les types et les statuts proposés. Archivez une valeur plutôt que la supprimer : les retours existants la gardent.",
       "types": "Types",
       "statuses": "Statuts",
@@ -182,7 +181,11 @@
       "closedFlag": "final",
       "system": "Système",
       "archive": "Archiver",
-      "restore": "Restaurer"
+      "restore": "Restaurer",
+      "pageTitle": "Gérer les retours",
+      "pageDescription": "Tout ce que les utilisateurs ont envoyé : répondre, changer le statut ou le type. Les types et statuts sont dans le second onglet.",
+      "tabFeedback": "Retours",
+      "tabSettings": "Types et statuts"
     }
   },
   "forbidden": {
