@@ -23,7 +23,10 @@ from app.main import app  # noqa: E402
 from app.storage import StoredObject, get_store  # noqa: E402
 
 SEEDED = ("feedback_types", "feedback_statuses")
-RESET = "TRUNCATE feedback_attachments, feedback_messages, feedbacks, feedback_types, feedback_statuses, user_profiles"
+RESET = (
+    "TRUNCATE feedback_attachments, feedback_messages, feedbacks, feedback_types, feedback_statuses, "
+    "user_profiles, notifications"
+)
 
 
 async def _sql(*statements: str) -> None:
