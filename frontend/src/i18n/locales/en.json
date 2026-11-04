@@ -66,8 +66,9 @@
     "language": "Language",
     "signOut": "Sign out",
     "giveFeedback": "Give feedback",
-    "myFeedback": "My feedback",
-    "admin": "Administration"
+    "myFeedback": "Manage my feedback",
+    "admin": "Administration",
+    "feedback": "Feedback"
   },
   "appHome": {
     "welcome": "Welcome, {{name}}",
@@ -133,11 +134,16 @@
       "myTitle": "My feedback",
       "myDescription": "What you sent us and where it stands.",
       "new": "New feedback",
-      "label": "Feedback list"
+      "label": "Feedback list",
+      "more": "Show {{count}} more",
+      "count": "{{shown}} of {{total}}"
     },
     "thread": {
       "statusChanged": "{{name}} changed the status",
-      "staff": "Team"
+      "staff": "Team",
+      "label": "Follow-up",
+      "empty": "No answer yet.",
+      "older": "Show {{count}} older messages ({{total}} hidden)"
     },
     "reply": {
       "label": "Your answer",

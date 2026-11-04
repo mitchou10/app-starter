@@ -45,9 +45,9 @@ export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
   const status = byId(statuses, feedback.statusId)
 
   return (
-    <article className="grid gap-6">
+    <article className="flex min-h-0 flex-col gap-3 lg:h-full lg:overflow-y-auto">
       {back}
-      <header className="grid gap-3">
+      <header className="grid shrink-0 gap-3">
         <h2 className="text-2xl font-semibold">{feedback.title}</h2>
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           {type && <ReferenceBadge name={type.name} tone={type.tone} />}
@@ -57,12 +57,19 @@ export function FeedbackDetail({ feedbackId, listPath }: FeedbackDetailProps) {
         <FeedbackControls feedback={feedback} />
       </header>
 
-      <div className="grid gap-3 rounded-lg border p-4">
-        <p className="whitespace-pre-wrap">{feedback.description}</p>
-        <Screenshots attachments={feedback.attachments} />
+      {/* The text and the screenshots side by side, each scrolling inside its own box if it is long. */}
+      <div className="flex shrink-0 flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-start">
+        <p className="max-h-24 flex-1 overflow-y-auto text-sm whitespace-pre-wrap">{feedback.description}</p>
+        {feedback.attachments.length > 0 && (
+          <div className="max-h-24 shrink-0 overflow-y-auto sm:w-44">
+            <Screenshots attachments={feedback.attachments} compact />
+          </div>
+        )}
       </div>
 
-      <FeedbackThread messages={feedback.messages} />
+      <div className="flex min-h-48 flex-1 flex-col">
+        <FeedbackThread key={feedback.id} messages={feedback.messages} />
+      </div>
       <ReplyBox onSend={(body, files) => reply(feedback.id, body, files)} />
     </article>
   )

@@ -40,8 +40,68 @@ function message(partial: Partial<FeedbackMessage> & Pick<FeedbackMessage, 'body
   }
 }
 
+/** A back-and-forth of `count` exchanges between the team and the author, to fill a long follow-up. */
+function conversation(author: string, count: number): FeedbackMessage[] {
+  return Array.from({ length: count }, (_, i) => {
+    const hour = String(9 + i).padStart(2, '0')
+    return [
+      message({ body: `Could you try again after step ${i + 1}: clear the cache, then reload the page?`, authorUsername: 'grace', authorIsStaff: true, createdAt: `2026-11-03T${hour}:00:00Z` }),
+      message({ body: `I did step ${i + 1}, the save button still does nothing.`, authorUsername: author, createdAt: `2026-11-03T${hour}:30:00Z` }),
+    ]
+  }).flat()
+}
+
+const COLLEAGUES = [
+  { id: 'ada-id', username: 'ada' },
+  { id: 'linus-id', username: 'linus' },
+  { id: 'margaret-id', username: 'margaret' },
+  { id: 'alan-id', username: 'alan' },
+]
+
+/**
+ * Older feedback, to fill several pages of the list: 9 of the viewer's (closed questions, so they do not disturb the
+ * rest of the examples) and 20 from colleagues, in every status. All older than the hand-written ones.
+ */
+function bulk(me: { id: string; username: string }): Feedback[] {
+  const base = { attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
+  const mine = Array.from({ length: 9 }, (_, i): Feedback => ({
+    ...base,
+    id: `fb-m${i + 1}`,
+    title: `Question #${i + 1}: where do I find the old exports?`,
+    description: 'I looked in the menu and could not find them.',
+    typeId: 'question',
+    statusId: 'done',
+    createdBy: me.id,
+    createdByUsername: me.username,
+    createdAt: `2026-10-${String(19 - i).padStart(2, '0')}T09:00:00Z`,
+    updatedAt: `2026-10-${String(19 - i).padStart(2, '0')}T10:00:00Z`,
+  }))
+  const types = ['bug', 'suggestion', 'question', 'other']
+  const statuses = ['new', 'review', 'planned', 'progress', 'done']
+  const others = Array.from({ length: 20 }, (_, i): Feedback => {
+    const who = COLLEAGUES[i % COLLEAGUES.length]
+    return {
+      ...base,
+      id: `fb-o${i + 1}`,
+      title: `Feedback from ${who.username} #${i + 1}`,
+      description: 'Some details about what happened and what was expected.',
+      typeId: types[i % types.length],
+      statusId: statuses[i % statuses.length],
+      createdBy: who.id,
+      createdByUsername: who.username,
+      createdAt: `2026-10-${String(28 - (i % 9)).padStart(2, '0')}T08:00:00Z`,
+      updatedAt: `2026-10-${String(28 - (i % 9)).padStart(2, '0')}T08:30:00Z`,
+    }
+  })
+  return [...mine, ...others]
+}
+
 /** Some feedback for the mockups: the first ones belong to the person looking at them, the others to colleagues. */
 export function buildMockFeedbacks(me: { id: string; username: string }): Feedback[] {
+  return [...handWritten(me), ...bulk(me)]
+}
+
+function handWritten(me: { id: string; username: string }): Feedback[] {
   const base = { updatedAt: '2026-11-03T10:00:00Z', attachments: [] as Attachment[], messages: [] as FeedbackMessage[] }
   return [
     {
@@ -60,6 +120,7 @@ export function buildMockFeedbacks(me: { id: string; username: string }): Feedba
         message({ kind: 'status_change', body: '', authorUsername: 'grace', authorIsStaff: true, createdAt: '2026-11-02T10:00:00Z', oldStatusId: 'new', newStatusId: 'review' }),
         message({ body: 'Thanks for the report. Which browser version are you on?', authorUsername: 'grace', authorIsStaff: true, createdAt: '2026-11-02T10:05:00Z' }),
         message({ body: 'Firefox 132 and Chrome 130. Here is the console.', authorUsername: me.username, createdAt: '2026-11-02T11:20:00Z', attachments: [picture('console', 300)] }),
+        ...conversation(me.username, 7),
         message({ body: 'Found it, a request fails silently. Fixing it.', authorUsername: 'grace', authorIsStaff: true, createdAt: '2026-11-04T09:10:00Z' }),
         message({ kind: 'status_change', body: '', authorUsername: 'grace', authorIsStaff: true, createdAt: '2026-11-04T09:12:00Z', oldStatusId: 'review', newStatusId: 'progress' }),
       ],

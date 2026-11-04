@@ -26,7 +26,7 @@ it('lists only my feedback, with its type, its status and its number of answers'
   const item = screen.getByRole('link', { name: /save button/ })
   expect(within(item).getByText('Bug')).toBeInTheDocument()
   expect(within(item).getByText('In progress')).toBeInTheDocument()
-  expect(within(item).getByTitle('Answers')).toHaveTextContent('3')
+  expect(within(item).getByTitle('Answers')).toHaveTextContent('17')
 })
 
 it('filters by status, "open" meaning every status that is not closed', async () => {
@@ -75,17 +75,25 @@ it('can be cancelled without creating anything', async () => {
   const dialog = await openDialog()
   await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-  expect(within(screen.getByRole('region', { name: 'Feedback list' })).getAllByRole('listitem')).toHaveLength(3)
+  expect(within(screen.getByRole('region', { name: 'Feedback list' })).getAllByRole('listitem')).toHaveLength(10) // one page
 })
 
 // ---- one feedback
 
-it('shows the follow-up: answers and changes of status, with who is from the team', async () => {
+it('shows the latest part of the follow-up first, with the changes of status, and loads the older ones on request', async () => {
   await open('/feedback/fb-1')
-  expect(screen.getByRole('heading', { name: /save button/ })).toBeInTheDocument()
-  expect(screen.getByText('Thanks for the report. Which browser version are you on?')).toBeInTheDocument()
-  expect(screen.getAllByText('Team').length).toBeGreaterThan(0)
-  expect(screen.getAllByText(/grace changed the status/).length).toBe(2)
+  const thread = screen.getByRole('log', { name: 'Follow-up' })
+  // 19 messages, the last 10 are shown: the newest answer and the last change of status are there...
+  expect(within(thread).getByText('Found it, a request fails silently. Fixing it.')).toBeInTheDocument()
+  expect(within(thread).getByText(/grace changed the status/)).toBeInTheDocument()
+  expect(within(thread).getAllByText('Team').length).toBeGreaterThan(0)
+  // ... the first ones are not
+  expect(within(thread).queryByText('Thanks for the report. Which browser version are you on?')).not.toBeInTheDocument()
+
+  await userEvent.click(within(thread).getByRole('button', { name: /Show 9 older messages/ }))
+  expect(within(thread).getByText('Thanks for the report. Which browser version are you on?')).toBeInTheDocument()
+  expect(within(thread).getAllByText(/grace changed the status/)).toHaveLength(2) // both changes of status
+  expect(within(thread).queryByRole('button', { name: /older messages/ })).not.toBeInTheDocument()
 })
 
 it('lets the author reply, close and reopen, but not change the status', async () => {
@@ -140,14 +148,15 @@ it('keeps the administration out of the sidebar and in the profile menu, for adm
 it('does not show the administration to a user', async () => {
   await open('/app')
   await userEvent.click(screen.getByRole('button', { name: 'Open the user menu' }))
-  await screen.findByRole('menuitem', { name: 'My feedback' })
+  await screen.findByRole('menuitem', { name: 'Manage my feedback' })
   expect(screen.queryByText('Administration')).not.toBeInTheDocument()
 })
 
 it('shows an admin all the open feedback with its author, and a user an access denied page', async () => {
   await open('/admin/feedback', ada)
   expect(screen.getByRole('link', { name: /Export my data as CSV/ })).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: /linus/ })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /Photo upload fails/ })).toBeInTheDocument()
+  expect(screen.getAllByText(/linus/).length).toBeGreaterThan(0) // the author is shown
   expect(screen.queryByRole('link', { name: /How do I change the language/ })).not.toBeInTheDocument() // done
 })
 
@@ -254,4 +263,42 @@ it('gives the admin one page: the feedback with its detail, and the types and st
 
   await userEvent.click(screen.getByRole('tab', { name: 'Feedback' }))
   expect(router.state.location.pathname).toBe('/admin/feedback')
+})
+
+// ---- pagination of the list
+
+const listItems = () => within(screen.getByRole('region', { name: 'Feedback list' })).getAllByRole('listitem')
+
+it('shows the list by pages of ten, with how many there are and a button for the next page', async () => {
+  await open('/feedback')
+  expect(listItems()).toHaveLength(10)
+  expect(screen.getByText('10 of 12')).toBeInTheDocument()
+
+  await userEvent.click(screen.getByRole('button', { name: 'Show 2 more' }))
+  expect(listItems()).toHaveLength(12)
+  expect(screen.getByText('12 of 12')).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /Show .* more/ })).not.toBeInTheDocument()
+})
+
+it('starts again from the first page when the filters change', async () => {
+  await open('/admin/feedback', ada)
+  await pick('Filter by status', 'All statuses')
+  await userEvent.click(screen.getByRole('button', { name: /Show 10 more/ }))
+  expect(listItems().length).toBe(20)
+  await pick('Filter by type', 'Bug')
+  expect(listItems().length).toBeLessThanOrEqual(10)
+})
+
+it('keeps the feedback being read in the list even when it is on a page that is not loaded', async () => {
+  await open('/feedback/fb-m9') // the oldest of 12: on the second page
+  expect(screen.getByRole('heading', { name: /Question #9/ })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /Question #9/ })).toHaveAttribute('aria-current', 'true')
+  expect(screen.getByText('11 of 12')).toBeInTheDocument() // the ten of the first page and the open one
+})
+
+it('has no count and no button when there is nothing to list', async () => {
+  await open('/feedback')
+  await pick('Filter by status', 'New')
+  expect(screen.getByText('No feedback here.')).toBeInTheDocument()
+  expect(screen.queryByText(/ of /)).not.toBeInTheDocument()
 })

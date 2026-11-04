@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ScreenshotPicker } from './ScreenshotPicker'
 
@@ -12,7 +11,7 @@ export function ReplyBox({ onSend }: { onSend: (body: string, files: File[]) => 
 
   return (
     <form
-      className="grid gap-3 rounded-lg border p-4"
+      className="grid shrink-0 gap-2 rounded-lg border p-3"
       onSubmit={(event) => {
         event.preventDefault()
         if (!body.trim()) return
@@ -21,10 +20,16 @@ export function ReplyBox({ onSend }: { onSend: (body: string, files: File[]) => 
         setFiles([])
       }}
     >
-      <Label htmlFor="reply">{t('feedback.reply.label')}</Label>
-      <Textarea id="reply" rows={3} value={body} onChange={(event) => setBody(event.target.value)} />
-      <ScreenshotPicker files={files} onChange={setFiles} />
-      <div className="flex justify-end">
+      <Textarea
+        id="reply"
+        rows={2}
+        aria-label={t('feedback.reply.label')}
+        placeholder={t('feedback.reply.label')}
+        value={body}
+        onChange={(event) => setBody(event.target.value)}
+      />
+      <div className="flex items-start justify-between gap-3">
+        <ScreenshotPicker files={files} onChange={setFiles} />
         <Button type="submit" disabled={!body.trim()}>
           {t('feedback.reply.send')}
         </Button>

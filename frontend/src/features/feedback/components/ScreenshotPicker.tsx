@@ -44,7 +44,7 @@ export function ScreenshotPicker({ files, onChange }: ScreenshotPickerProps) {
   })
 
   return (
-    <div className="grid gap-2">
+    <div className="grid min-w-0 gap-2">
       <div className="flex flex-wrap items-center gap-2">
         {files.map((file, index) => (
           <div key={`${file.name}-${index}`} className="relative size-16 overflow-hidden rounded-md border">
