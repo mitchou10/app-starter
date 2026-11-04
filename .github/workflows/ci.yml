@@ -61,6 +61,7 @@ jobs:
       contents: read
     with:
       WORKING_DIRECTORY: backend
+      PYTHON_VERSION: "3.13" # the project requires >=3.13
       TARGET: app
 
   backend-deadcode:
@@ -71,6 +72,7 @@ jobs:
       contents: read
     with:
       WORKING_DIRECTORY: backend
+      PYTHON_VERSION: "3.13" # the project requires >=3.13
       PATHS: app
 
   backend-tests:
@@ -81,6 +83,7 @@ jobs:
       contents: read
     with:
       WORKING_DIRECTORY: backend
+      PYTHON_VERSION: "3.13" # the project requires >=3.13
       COVERAGE_SOURCE: app
       MIN_COVERAGE: "80"
 
